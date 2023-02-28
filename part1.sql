@@ -338,6 +338,27 @@ do $trigger_functions$ begin
         end if;
     end; $$ language plpgsql;
 
+    create or replace function trg_fnc_p2p_insert() returns trigger as $$
+    declare
+        cnt int := count(*) from
+                    (
+                        select
+                            *
+                        from P2P
+                        left join Checks
+                            on P2P."Check" = Checks.ID
+                        where new."Check" = Checks.ID and
+                            new.CheckingPeer = P2P.CheckingPeer
+                    ) as tmp;
+    begin
+        if (cnt % 2 != 0 and new.State = 'Start' or
+                cnt % 2 = 0 and new.State != 'Start') then
+            return null;
+        else
+            return new;
+        end if;
+    end; $$ language plpgsql;
+
     -- Verter
     create trigger trg_verter_successful_checks
     before insert on Verter
@@ -349,6 +370,12 @@ do $trigger_functions$ begin
     before insert on XP
     for each row
     execute procedure trg_fnc_successful_checks();
+
+    -- P2P
+    create trigger trg_p2p_insert
+    before insert on P2P
+    for each row
+    execute procedure trg_fnc_p2p_insert();
 end $trigger_functions$ language plpgsql;
 
 
