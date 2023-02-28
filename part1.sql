@@ -318,6 +318,40 @@ do $init_procedures$ begin
 end $init_procedures$;
 
 
+-----------------------
+-- Trigger functions --
+-----------------------
+do $trigger_functions$ begin
+    create or replace function trg_fnc_successful_checks() returns trigger as $$ begin
+        if (new."Check" in 
+            (
+                select
+                    Checks.ID
+                from P2P
+                left join Checks
+                    on P2P."Check" = Checks.ID
+                where P2P.State = 'Success'
+            )
+        ) then
+            return new;
+        else return null;
+        end if;
+    end; $$ language plpgsql;
+
+    -- Verter
+    create trigger trg_verter_successful_checks
+    before insert on Verter
+    for each row
+    execute procedure trg_fnc_successful_checks();
+
+    -- XP
+    create trigger trg_xp_successful_checks
+    before insert on XP
+    for each row
+    execute procedure trg_fnc_successful_checks();
+end $trigger_functions$ language plpgsql;
+
+
 -----------------
 -- Fill tables --
 -----------------
