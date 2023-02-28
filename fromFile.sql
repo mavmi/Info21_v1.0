@@ -1,0 +1,10 @@
+call peers_fromfile(',');
+call tasks_fromfile(',');
+call checks_fromfile(',');
+call p2p_fromfile(',');
+call verter_fromfile(',');
+call transferred_points_fromfile(',');
+call friends_fromfile(',');
+call recommendations_fromfile(',');
+call xp_fromfile(',');
+call timetracking_fromfile(',');

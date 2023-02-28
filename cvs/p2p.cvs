@@ -1,0 +1,14 @@
+1,1,Nickname_2,Start,12:13:14
+2,1,Nickname_2,Success,13:14:15
+3,2,Nickname_3,Start,15:16:17
+4,2,Nickname_3,Failure,16:17:18
+5,3,Nickname_4,Start,17:18:19
+6,3,Nickname_4,Success,18:19:20
+7,4,Nickname_5,Start,18:19:20
+8,4,Nickname_5,Success,19:20:21
+9,5,Nickname_1,Start,19:20:21
+10,5,Nickname_1,Success,20:21:22
+11,6,Nickname_2,Start,20:21:22
+12,6,Nickname_2,Success,21:22:23
+13,7,Nickname_3,Start,21:22:23
+14,7,Nickname_3,Success,22:23:24
