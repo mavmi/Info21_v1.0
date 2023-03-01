@@ -323,15 +323,15 @@ end $init_procedures$;
 -----------------------
 do $trigger_functions$ begin
     create or replace function trg_fnc_successful_checks() returns trigger as $$ begin
-        if (new."Check" in 
-            (
-                select
-                    Checks.ID
+        if (coalesce((
+                select "Check"
                 from P2P
-                left join Checks
-                    on P2P."Check" = Checks.ID
-                where P2P.State = 'Success'
-            )
+                where P2P."Check" = new."Check" and P2P.State = 'Success'
+                intersect
+                select ID
+                from Checks
+                where Checks.ID = new."Check"
+            )::int, 0) != 0
         ) then
             return new;
         else return null;
@@ -359,6 +359,23 @@ do $trigger_functions$ begin
         end if;
     end; $$ language plpgsql;
 
+    create or replace function trg_fnc_transferred_points_insert() returns trigger as $$
+    declare
+        n int;
+    begin
+        
+        update TransferredPoints set PointsAmount = PointsAmount + 1
+        where TransferredPoints.CheckingPeer = new.CheckingPeer and
+            TransferredPoints.CheckedPeer = new.CheckedPeer;
+        get diagnostics n = row_count;
+        
+        if (n != 0) then
+            return null;
+        else
+            return new;
+        end if;
+    end; $$ language plpgsql;
+
     -- Verter
     create trigger trg_verter_successful_checks
     before insert on Verter
@@ -376,6 +393,12 @@ do $trigger_functions$ begin
     before insert on P2P
     for each row
     execute procedure trg_fnc_p2p_insert();
+
+    -- TransferredPoints
+    create trigger trg_transferred_points_insert
+    before insert on TransferredPoints
+    for each row
+    execute procedure trg_fnc_transferred_points_insert();
 end $trigger_functions$ language plpgsql;
 
 
