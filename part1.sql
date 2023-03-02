@@ -363,12 +363,12 @@ do $trigger_functions$ begin
     declare
         n int;
     begin
-        
+
         update TransferredPoints set PointsAmount = PointsAmount + 1
         where TransferredPoints.CheckingPeer = new.CheckingPeer and
             TransferredPoints.CheckedPeer = new.CheckedPeer;
         get diagnostics n = row_count;
-        
+
         if (n != 0) then
             return null;
         else
