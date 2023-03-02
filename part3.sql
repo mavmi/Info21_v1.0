@@ -3,10 +3,11 @@ create or replace function fnc_readable_transferred_points()
 $$
 begin
 	return query(
-		select CheckingPeer as Peer1,
-			CheckedPeer as Peer2,
-			TransferredPoints.PointsAmount as "PointsAmount"
-		from TransferredPoints
+		select *
+		from TransferredPoints tp1
+			left join TransferredPoints tp2 on tp2.ID > tp1.ID
+				and tp1.checkingpeer = tp2.checkedpeer
+				and tp1.checkedpeer = tp2.checkingpeer
 	);
 end;
 $$ language plpgsql;
