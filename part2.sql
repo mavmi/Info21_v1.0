@@ -1,3 +1,9 @@
+/*
+ * 1. If the status is "start" add a record in the Checks table (use today's date)
+ * 2. Add a record in the P2P table:
+ * 	- if status is "start" - P2P.Check is just added record in the Checks
+ * 	- if status isn't "start" - P2P.Check is already added Check in Checks table
+ */
 create or replace procedure prcdr_fnc_p2p(
 	checked_peer varchar,
 	checker_peer varchar,
@@ -41,6 +47,11 @@ end;
 $$ language plpgsql;
 
 
+/*
+ * Add a record to the Verter table:
+ * 	the latest (by time) P2P checking of 'checked_peer' with 'task_name'
+ * 	where P2P.State is 'Success'
+ */
 create or replace procedure prcdr_fnc_verter(
 	checked_peer varchar,
 	task_name varchar,
@@ -48,14 +59,33 @@ create or replace procedure prcdr_fnc_verter(
 	argtime time
 ) as
 $$
-begin
-	insert into Verter values(
-
+declare
+	check_id int := (
+		select Checks.ID
+		from Checks
+			join P2P on P2P."Check" = Checks.ID
+				and P2P.State = 'Success'
+		where Checks.Task = task_name and Checks.Peer = checked_peer
+		order by Checks.Task desc, P2P.Time desc
+		limit 1
 	);
+begin
+	if (coalesce(check_id, 0) != 0) then
+		insert into Verter values(
+			(select coalesce((max(ID) + 1), 1) from Verter),
+			check_id,
+			status,
+			argtime
+		);
+	end if;
 end;
 $$ language plpgsql;
 
 
+/*
+ * after adding a record with the "start" status to the P2P table,
+ * change the corresponding record in the TransferredPoints table
+ */
 create or replace function trg_fnc_p2p_insert_transferred_poins() returns trigger as
 $$
 begin
@@ -77,6 +107,11 @@ for each row
 execute procedure trg_fnc_p2p_insert_transferred_poins();
 
 
+/*
+ * Check if adding record to the XP is correct:
+ * 	- The number of XP does not exceed the maximum available
+ * 	- State of checking must be 'Success'
+ */
 create or replace function trg_fnc_xp_check_correct_insert() returns trigger as
 $$
 begin
