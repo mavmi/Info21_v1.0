@@ -285,7 +285,7 @@ $$ language plpgsql;
 do
 $create_tables$
 declare
-    /*** Do or not to do inserts ***/
+    /*** Do or not do inserts ***/
     fill boolean := true;
 begin
     /*** Tables creating and possibly filling ***/
@@ -304,15 +304,24 @@ $create_tables$;
 
 
 /*** Utils ***/
-create or replace function get_cvs_dir() returns varchar as $$ begin
-    return '/Users/pmaryjo/Desktop/Info21_v1.0/cvs/';
-end $$ language plpgsql;
-create or replace procedure save_to_file(separator char, table_name varchar, file_name varchar) as $$ begin
+create or replace function get_cvs_dir() returns varchar as
+$$
+begin
+    return '/Users/msalena/Desktop/00SQL/cvs/';
+end
+$$ language plpgsql;
+create or replace procedure save_to_file(separator char, table_name varchar, file_name varchar) as
+$$
+begin
     execute format('copy %s to ''%s'' delimiter ''%s'' csv', table_name, concat(get_cvs_dir(), file_name), separator);
-end $$ language plpgsql;
-create or replace procedure read_from_file(separator char, table_name varchar, file_name varchar) as $$ begin
+end
+$$ language plpgsql;
+create or replace procedure read_from_file(separator char, table_name varchar, file_name varchar) as 
+$$
+begin
     execute format('copy %s from ''%s'' delimiter ''%s'' csv', table_name, concat(get_cvs_dir(), file_name), separator);
-end $$ language plpgsql;
+end
+$$ language plpgsql;
 
 
 /*** Trigger functions ***/
