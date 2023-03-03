@@ -388,6 +388,27 @@ begin
 end;
 $$ language plpgsql;
 
+-- Check if peer's TimeTracking status is not equal to new's one --
+create or replace function trg_fnc_time_tracking_insert() returns trigger as
+$$
+declare
+    last_status int :=  (
+                            select
+                                State
+                            from TimeTracking
+                            where TimeTracking.Peer = new.Peer
+                            order by Date desc, Time desc
+                            limit 1
+                        );
+begin
+    if (last_status = new.State) then
+        return null;
+    else
+        return new;
+    end if;
+end;
+$$ language plpgsql;
+
 
 /*** Triggers ***/
 create trigger trg_verter_successful_checks
@@ -409,6 +430,11 @@ create trigger trg_transferred_points_insert
 before insert on TransferredPoints
 for each row
 execute procedure trg_fnc_transferred_points_insert();
+
+create trigger trg_time_tracking_insert
+before insert on TimeTracking
+for each row
+execute procedure trg_fnc_time_tracking_insert();
 
 
 /*** IO procedures ***/
