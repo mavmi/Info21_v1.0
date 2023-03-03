@@ -17,12 +17,14 @@ begin
 				end
 			) as PointsAmount
 		from TransferredPoints tp1
-			left join TransferredPoints tp2 on tp2.ID > tp1.ID
+			left join TransferredPoints tp2 on tp2.ID != tp1.ID
 				and tp1.checkingpeer = tp2.checkedpeer
 				and tp1.checkedpeer = tp2.checkingpeer
 	);
 end;
 $$ language plpgsql;
+
+select * from fnc_readable_transferred_points() order by 1;
 
 
 /*
@@ -80,8 +82,72 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR
+-- START PROCEDURE WITH REFCURSOR --
 -- call prcdr_fnc_passed_state_percentage('ref');
 -- fetch all in "ref";
 
 
+/*
+ * Calculate the change in the number of peer points of each 
+ * peer using the TransferredPoints table
+ */
+create or replace procedure prcdr_fnc_total_points(ref refcursor) as
+$$
+begin
+	open ref for
+		with cte_checking as (
+			select
+				checkingpeer as Peer,
+				count(pointsamount) as total_plus_count
+			from TransferredPoints
+			group by checkingpeer
+			order by 1
+		)
+		select checked.Peer,
+			(coalesce(total_plus_count, 0) - coalesce(total_minus_count, 0)) as PointsChange
+		from cte_checking
+			full join (
+				select
+					checkedpeer as Peer,
+					count(pointsamount) as total_minus_count
+				from TransferredPoints
+				group by checkedpeer
+				order by 1
+			) as checked using(Peer);
+end;
+$$ language plpgsql;
+
+-- START PROCEDURE WITH REFCURSOR --
+-- call prcdr_fnc_total_points_changes('ref');
+-- fetch all in "ref";
+
+
+/*
+ * Calculate the change in the number of peer points of each  
+ * peer using the fnc_readable_transferred_points() funcion
+ */
+create or replace procedure prcdr_fnc_totall_points_from_func(ref refcursor) as
+$$
+begin
+	open ref for
+		with cte_peer1_count as (
+			select peer1 as Peer, count(peer1) as total_plus_count
+			from fnc_readable_transferred_points()
+			group by peer1 
+			order by 1
+		)
+		select peer2_count.Peer,
+			(coalesce(total_plus_count, 0) - coalesce(total_minus_count, 0)) as PointsChange
+		from cte_peer1_count
+			full join (
+				select peer2 as Peer, count(peer2) as total_minus_count
+				from fnc_readable_transferred_points()
+				group by peer2 
+				order by 1
+			) as peer2_count using(Peer);
+end;
+$$ language plpgsql;
+
+-- START PROCEDURE WITH REFCURSOR --
+-- call prcdr_fnc_totall_points_from_func('ref');
+-- fetch all in "ref";

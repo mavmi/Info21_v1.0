@@ -27,6 +27,8 @@ In the future, Whether a task belongs to a block will be determined by the name 
 
 - Maybe, create one file which will call all helpfull sql scripts?
 
+- Add utils function which will return next id of coming as argument 
+
 
 **To do some inserting to part1's tables for correct testing part3:**
 	1. [TransferredPoints] insert same communications? for example: 'peer1'-'peer2', 'peer1'-'peer2', 'peer2'-'peer1', 'peer1'-'peer2'
