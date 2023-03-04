@@ -151,3 +151,51 @@ $$ language plpgsql;
 -- START PROCEDURE WITH REFCURSOR --
 -- call prcdr_fnc_totall_points_from_func('ref');
 -- fetch all in "ref";
+
+
+create or replace procedure prcdr_fnc_frequently_checked_task(ref refcursor) as
+$$
+begin
+	open ref for
+		with cte_check as (
+			select date, task, count(date) as count
+			from Checks 
+			group by date, task
+			order by date
+		)
+		select c1.date as Day,
+			c1.task
+		from cte_check c1
+			left join cte_check c2 on c2.task != c1.task
+				and c2.date = c1.date and c2.count > c1.count
+		where c2.date is null;
+end;
+$$ language plpgsql;
+
+-- START PROCEDURE WITH REFCURSOR --
+-- call prcdr_fnc_frequently_checked_task('ref');
+-- fetch all in "ref";
+
+
+--insert into P2P values(15, 8, 'Nickname_2', 'Start', '12:13:14');
+
+insert into P2P values(18, 9, 'Nickname_3', 'Start', '22:22:30');
+insert into P2P values(19, 9, 'Nickname_3', 'Success', '22:30:24');
+
+with cte_check as (
+	select *, count("Check") over (partition by "Check")
+	from P2P
+	order by id desc
+)
+select make_time(
+	(extract(hour from (end1.time - start2.time)))::int, 
+	(extract(minute from (end1.time - start2.time)))::int,
+	(extract(second from (end1.time - start2.time)))
+) as CheckDuration
+from cte_check end1
+	left join cte_check start2 on start2."Check" = end1."Check"
+		and end1.state != start2.state
+where end1.count = 2 limit 1;
+
+
+
