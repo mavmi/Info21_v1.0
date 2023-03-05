@@ -25,7 +25,9 @@ In the future, Whether a task belongs to a block will be determined by the name 
 
 - ~~[part1/TimeTracking] Add TRIGGER limit for adding peer with state 2 if there not was  status 1 for this peer. And add limit for adding one peer with state 1 more that one time~~
 
-- [part1/P2P] Add TRIGGER for not be able to add P2P review with same Checks for different reviews
+- ~~[part1/P2P] Add TRIGGER for not be able to add P2P review with same Checks for different reviews~~
+
+- [part1/P2P] Add TRIGGER for not be able to add Check to Task if the guy didn't do ParentTask of this task 
 
 - Maybe, create one file which will call all helpfull sql scripts?
 
@@ -33,6 +35,7 @@ In the future, Whether a task belongs to a block will be determined by the name 
 
 
 **To do some inserting to part1's tables for correct testing part3:**
+
 	1. [TransferredPoints] insert same communications? for example: 'peer1'-'peer2', 'peer1'-'peer2', 'peer2'-'peer1', 'peer1'-'peer2'
 	2. [succsessfull_pasted] add successful passing of same task and same peer
 	3. [TimeTracking] insert peers which stated in campuse for the whole day (24 hours)
