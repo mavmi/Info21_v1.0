@@ -177,25 +177,36 @@ $$ language plpgsql;
 -- fetch all in "ref";
 
 
---insert into P2P values(15, 8, 'Nickname_2', 'Start', '12:13:14');
+create or replace procedure prcdr_fnc_checking_time_duration(ref refcursor) as
+$$
+begin
+	open ref for
+		with cte_check as (
+			select *, count("Check") over (partition by "Check")
+			from P2P
+			order by id desc
+		)
+		select make_time(
+			(extract(hour from (end1.time - start2.time)))::int, 
+			(extract(minute from (end1.time - start2.time)))::int,
+			(extract(second from (end1.time - start2.time)))
+		) as CheckDuration
+		from cte_check end1
+			left join cte_check start2 on start2."Check" = end1."Check"
+				and end1.state != start2.state
+		where end1.count = 2 limit 1;
+end;
+$$ language plpgsql;
 
-insert into P2P values(18, 9, 'Nickname_3', 'Start', '22:22:30');
-insert into P2P values(19, 9, 'Nickname_3', 'Success', '22:30:24');
+-- START PROCEDURE WITH REFCURSOR --
+-- call prcdr_fnc_checking_time_duration('ref');
+-- fetch all in "ref";
 
-with cte_check as (
-	select *, count("Check") over (partition by "Check")
-	from P2P
-	order by id desc
-)
-select make_time(
-	(extract(hour from (end1.time - start2.time)))::int, 
-	(extract(minute from (end1.time - start2.time)))::int,
-	(extract(second from (end1.time - start2.time)))
-) as CheckDuration
-from cte_check end1
-	left join cte_check start2 on start2."Check" = end1."Check"
-		and end1.state != start2.state
-where end1.count = 2 limit 1;
 
+
+select count(*) from P2P;
+select count(*) from Checks;
+select count(*) from Tasks;
+select count(*) from Verter;
 
 

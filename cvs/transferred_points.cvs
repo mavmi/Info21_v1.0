@@ -1,7 +1,7 @@
-1,Nickname_2,Nickname_1,1
-2,Nickname_3,Nickname_2,1
-3,Nickname_4,Nickname_3,1
-4,Nickname_5,Nickname_4,1
-5,Nickname_1,Nickname_5,1
-6,Nickname_2,Nickname_5,1
-7,Nickname_3,Nickname_5,1
+1,Sprat_eater,Wolf,1
+2,Near_Muslim,Sprat_eater,1
+3,Pirate,Near_Muslim,1
+4,Strangler,Pirate,1
+5,Wolf,Strangler,1
+6,Sprat_eater,Strangler,1
+7,Near_Muslim,Strangler,1
