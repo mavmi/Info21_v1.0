@@ -350,18 +350,20 @@ $$ language plpgsql;
 create or replace function trg_fnc_p2p_insert() returns trigger as
 $$
 declare
-    cnt int := count(*) from
-                (
-                    select *
-                    from P2P
-                    left join Checks
-                        on P2P."Check" = Checks.ID
-                    where new."Check" = Checks.ID and
-                        new.CheckingPeer = P2P.CheckingPeer
-                ) as tmp;
+    values int array[2] :=  (
+                                select
+                                    array[
+                                        count(*) filter (where new."Check" = Checks.ID and new.CheckingPeer = P2P.CheckingPeer),
+                                        count(*) filter (where new."Check" = Checks.ID)
+                                    ]
+                                from P2P left join Checks
+                                    on P2P."Check" = Checks.ID 
+                            );
 begin
-    if (cnt % 2 != 0 and new.State = 'Start' or
-            cnt % 2 = 0 and new.State != 'Start') then
+    if (values[1] % 2 != 0 and new.State = 'Start' or
+            values[1] % 2 = 0 and new.State != 'Start') then
+        return null;
+    elsif (values[2] >= 2) then
         return null;
     else
         return new;
