@@ -204,9 +204,8 @@ $$ language plpgsql;
 
 
 
-select count(*) from P2P;
-select count(*) from Checks;
-select count(*) from Tasks;
-select count(*) from Verter;
+select * from P2P;
+select * from Checks;
+select * from Verter;
 
 
