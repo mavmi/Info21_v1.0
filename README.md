@@ -27,11 +27,13 @@ In the future, Whether a task belongs to a block will be determined by the name 
 
 - ~~[part1/P2P] Add TRIGGER for not be able to add P2P review with same Checks for different reviews~~
 
-- [part1/P2P] Add TRIGGER for not be able to add Check to Task if the guy didn't do ParentTask of this task 
+- [part1/Check] Add TRIGGER for not be able to add Check to Task if the guy didn't do ParentTask of this task
+
+- [part1/P2P] Add TRIGGER for not be able to add different checking peer for Start and Success/Failure for one Check
 
 - Maybe, create one file which will call all helpfull sql scripts?
 
-- Add utils function which will return next id of coming as argument 
+- Add utils function which will return next id of coming as argument
 
 
 **To do some inserting to part1's tables for correct testing part3:**
@@ -39,20 +41,20 @@ In the future, Whether a task belongs to a block will be determined by the name 
 	1. [TransferredPoints] insert same communications? for example: 'peer1'-'peer2', 'peer1'-'peer2', 'peer2'-'peer1', 'peer1'-'peer2'
 	2. [succsessfull_pasted] add successful passing of same task and same peer
 	3. [TimeTracking] insert peers which stated in campuse for the whole day (24 hours)
-	COMPLETED 4. [P2P] 
+	COMPLETED 4. [P2P]
 		- insert Success passing which should not have Verter checking
 		- insert Starts which still don't end (has not Success/Failure)
 		- insert checks which different duration between Start and Success/Failure
-	COMPLETED 5. [Checks] 
+	COMPLETED 5. [Checks]
 		- more checks of one tasks to one day: '2023-01-01' - 'CPP1', '2023-01-01' - 'CPP2', '2023-01-01' - 'CPP3', '2023-01-01' - 'CPP1', '2023-01-01' - 'CPP1'
 		- same numbers of checks of one task: four checks of 'CPP1' and 'CPP2' on one day
 	COMPLETED 6. [Tasks] Add some blocks besides CPP
-	7. [Some tables] peers which completed the whole given block of tasks 
+	7. [Some tables] peers which completed the whole given block of tasks
 
 
 
 ### Need to talk about this moments:
 
-- [part3/ex2/fnc_successfully_passed_tasks] [part3/ex4/prcdr_fnc_passed_state_percentage] Do we need to add all successfully passed tasks from Verter or from P2P? I think there should be union of P2P and Verter
+- [part3/ex2/fnc_successfully_passed_tasks] [part3/ex4/prcdr_passed_state_percentage] Do we need to add all successfully passed tasks from Verter or from P2P? I think there should be union of P2P and Verter
 
-- [part3/ex4/prcdr_fnc_passed_state_percentage] how we can do the procedure there if it's select statement
+- [part3/ex4/prcdr_passed_state_percentage] how we can do the procedure there if it's select statement

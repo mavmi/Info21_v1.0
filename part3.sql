@@ -67,7 +67,7 @@ $$ language plpgsql;
 /*
  * Find the percentage of successful and unsuccessful checks for all time
  */
-create or replace procedure prcdr_fnc_passed_state_percentage(ref refcursor) as
+create or replace procedure prcdr_passed_state_percentage(ref refcursor) as
 $$
 begin
 	open ref for
@@ -83,15 +83,15 @@ end;
 $$ language plpgsql;
 
 -- START PROCEDURE WITH REFCURSOR --
--- call prcdr_fnc_passed_state_percentage('ref');
+-- call prcdr_passed_state_percentage('ref');
 -- fetch all in "ref";
 
 
 /*
- * Calculate the change in the number of peer points of each 
+ * Calculate the change in the number of peer points of each
  * peer using the TransferredPoints table
  */
-create or replace procedure prcdr_fnc_total_points(ref refcursor) as
+create or replace procedure prcdr_total_points(ref refcursor) as
 $$
 begin
 	open ref for
@@ -118,22 +118,22 @@ end;
 $$ language plpgsql;
 
 -- START PROCEDURE WITH REFCURSOR --
--- call prcdr_fnc_total_points_changes('ref');
+-- call prcdr_total_points_changes('ref');
 -- fetch all in "ref";
 
 
 /*
- * Calculate the change in the number of peer points of each  
+ * Calculate the change in the number of peer points of each
  * peer using the fnc_readable_transferred_points() funcion
  */
-create or replace procedure prcdr_fnc_totall_points_from_func(ref refcursor) as
+create or replace procedure prcdr_totall_points_from_func(ref refcursor) as
 $$
 begin
 	open ref for
 		with cte_peer1_count as (
 			select peer1 as Peer, count(peer1) as total_plus_count
 			from fnc_readable_transferred_points()
-			group by peer1 
+			group by peer1
 			order by 1
 		)
 		select peer2_count.Peer,
@@ -142,24 +142,24 @@ begin
 			full join (
 				select peer2 as Peer, count(peer2) as total_minus_count
 				from fnc_readable_transferred_points()
-				group by peer2 
+				group by peer2
 				order by 1
 			) as peer2_count using(Peer);
 end;
 $$ language plpgsql;
 
 -- START PROCEDURE WITH REFCURSOR --
--- call prcdr_fnc_totall_points_from_func('ref');
+-- call prcdr_totall_points_from_func('ref');
 -- fetch all in "ref";
 
 
-create or replace procedure prcdr_fnc_frequently_checked_task(ref refcursor) as
+create or replace procedure prcdr_frequently_checked_task(ref refcursor) as
 $$
 begin
 	open ref for
 		with cte_check as (
 			select date, task, count(date) as count
-			from Checks 
+			from Checks
 			group by date, task
 			order by date
 		)
@@ -173,11 +173,11 @@ end;
 $$ language plpgsql;
 
 -- START PROCEDURE WITH REFCURSOR --
--- call prcdr_fnc_frequently_checked_task('ref');
+-- call prcdr_frequently_checked_task('ref');
 -- fetch all in "ref";
 
 
-create or replace procedure prcdr_fnc_checking_time_duration(ref refcursor) as
+create or replace procedure prcdr_checking_time_duration(ref refcursor) as
 $$
 begin
 	open ref for
@@ -187,7 +187,7 @@ begin
 			order by id desc
 		)
 		select make_time(
-			(extract(hour from (end1.time - start2.time)))::int, 
+			(extract(hour from (end1.time - start2.time)))::int,
 			(extract(minute from (end1.time - start2.time)))::int,
 			(extract(second from (end1.time - start2.time)))
 		) as CheckDuration
@@ -199,13 +199,11 @@ end;
 $$ language plpgsql;
 
 -- START PROCEDURE WITH REFCURSOR --
--- call prcdr_fnc_checking_time_duration('ref');
+-- call prcdr_checking_time_duration('ref');
 -- fetch all in "ref";
 
 
 
-select * from P2P;
-select * from Checks;
-select * from Verter;
+create or replace procedure prcdr_
 
 
