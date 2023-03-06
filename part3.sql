@@ -219,6 +219,10 @@ $$ language plpgsql;
 
 
 
-create or replace procedure prcdr_
-
+-- FOR_EX09: How to tacke the last task in block_task
+select *
+from Tasks
+where substring(title from '.+?(?=\d{1,2})') = 'A'
+order by 1 DESC
+limit 1;
 
