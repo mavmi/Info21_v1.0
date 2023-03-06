@@ -4,7 +4,7 @@
  * 	- if status is "start" - P2P.Check is just added record in the Checks
  * 	- if status isn't "start" - P2P.Check is already added Check in Checks table
  */
-create or replace procedure prcdr_fnc_p2p(
+create or replace procedure prcdr_p2p(
 	checked_peer varchar,
 	checker_peer varchar,
 	task_name varchar,
@@ -52,7 +52,7 @@ $$ language plpgsql;
  * 	the latest (by time) P2P checking of 'checked_peer' with 'task_name'
  * 	where P2P.State is 'Success'
  */
-create or replace procedure prcdr_fnc_verter(
+create or replace procedure prcdr_verter(
 	checked_peer varchar,
 	task_name varchar,
 	status check_status,
