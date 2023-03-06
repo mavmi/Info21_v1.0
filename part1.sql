@@ -743,8 +743,32 @@ begin
 end;
 $$ language plpgsql;
 
+-- Check `CheckingPeer` on start and finish --
+create or replace function trg_fnc_p2p_insert_1() returns trigger as
+$$
+declare
+
+begin
+    if (new.State = 'Start') then
+        return new;
+    elsif   ((
+                select
+                    CheckingPeer
+                from P2P
+                where P2P."Check" = new."Check" and
+                    P2P.State = 'Start'
+                limit 1
+            ) != new.CheckingPeer) then
+        return null;
+    else
+        return new;
+    end if;
+
+end;
+$$ language plpgsql;
+
 -- Check if new row does not duplicate P2P-check with started or finished status --
-create or replace function trg_fnc_p2p_insert() returns trigger as
+create or replace function trg_fnc_p2p_insert_2() returns trigger as
 $$
 declare
     values int array[2] :=  (
@@ -808,6 +832,38 @@ begin
 end;
 $$ language plpgsql;
 
+-- Check if peer completed parent task --
+create or replace function trg_fnc_checks_insert() returns trigger as
+$$
+declare
+    declare ParentTask varchar :=   (
+                                        select
+                                            ParentTask
+                                        from Tasks
+                                        where Title = new.Task
+                                    );
+begin
+    if (ParentTask is null) then
+        return new;
+    elsif   (
+                select
+                    count(*)
+                from P2P
+                    join Checks on P2P."Check" = Checks.ID
+                    join Verter on Verter."Check" = Checks.ID
+                where
+                    Checks.Peer = new.Peer and
+                    Checks.Task = ParentTask and
+                    P2P.State = 'Success' and 
+                        (Verter.State = 'Success' or Verter.State is null)
+            ) = 0 then
+        return null;
+    else
+        return new;
+    end if;
+end;
+$$ language plpgsql;
+
 
 /*** Triggers ***/
 create trigger trg_verter_successful_checks
@@ -820,10 +876,15 @@ before insert on XP
 for each row
 execute procedure trg_fnc_successful_checks();
 
-create trigger trg_p2p_insert
+create trigger trg_p2p_insert_1
 before insert on P2P
 for each row
-execute procedure trg_fnc_p2p_insert();
+execute procedure trg_fnc_p2p_insert_1();
+
+create trigger trg_p2p_insert_2
+before insert on P2P
+for each row
+execute procedure trg_fnc_p2p_insert_2();
 
 create trigger trg_transferred_points_insert
 before insert on TransferredPoints
@@ -834,6 +895,11 @@ create trigger trg_time_tracking_insert
 before insert on TimeTracking
 for each row
 execute procedure trg_fnc_time_tracking_insert();
+
+create trigger trg_checks_insert
+before insert on Checks
+for each row
+execute procedure trg_fnc_checks_insert();
 
 
 /*** IO procedures ***/
