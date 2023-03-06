@@ -5,9 +5,9 @@ do
 $create_enum$
 begin
     create type check_status as enum(
-        insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Start', 1)
-        insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Success', 1)
-        insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Failure', 1)
+        'Start',
+        'Success',
+        'Failure'
     );
 exception
     when duplicate_object then null;
