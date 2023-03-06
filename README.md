@@ -38,7 +38,7 @@ In the future, Whether a task belongs to a block will be determined by the name 
 
 **To do some inserting to part1's tables for correct testing part3:**
 
-	1. [TransferredPoints] insert same communications? for example: 'peer1'-'peer2', 'peer1'-'peer2', 'peer2'-'peer1', 'peer1'-'peer2'
+	COMPLETED 1. [TransferredPoints] insert same communications? for example: 'peer1'-'peer2', 'peer1'-'peer2', 'peer2'-'peer1', 'peer1'-'peer2'
 	2. [succsessfull_pasted] add successful passing of same task and same peer
 	3. [TimeTracking] insert peers which stated in campuse for the whole day (24 hours)
 	COMPLETED 4. [P2P]
