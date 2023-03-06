@@ -1,4 +1,5 @@
 /*
+ * 1)
  * Returns table with all transferred_points between peers and total points.
  * The number is negative if peer 2 received more points from peer 1.
  */
@@ -28,6 +29,7 @@ select * from fnc_readable_transferred_points() order by 1;
 
 
 /*
+ * 2)
  * Returns all successfully passed tasks
  */
 create or replace function fnc_successfully_passed_tasks()
@@ -47,6 +49,7 @@ $$ language plpgsql;
 
 
 /*
+ * 3)
  * Retuens list of peers who have not left campus all the 'finding_day'
  */
 create or replace function fnc_hold_day_in_campus_list(finding_day time)
@@ -65,6 +68,7 @@ $$ language plpgsql;
 
 
 /*
+ * 4)
  * Find the percentage of successful and unsuccessful checks for all time
  */
 create or replace procedure prcdr_passed_state_percentage(ref refcursor) as
@@ -88,6 +92,7 @@ $$ language plpgsql;
 
 
 /*
+ * 5)
  * Calculate the change in the number of peer points of each
  * peer using the TransferredPoints table
  */
@@ -123,6 +128,7 @@ $$ language plpgsql;
 
 
 /*
+ * 6)
  * Calculate the change in the number of peer points of each
  * peer using the fnc_readable_transferred_points() funcion
  */
@@ -153,6 +159,10 @@ $$ language plpgsql;
 -- fetch all in "ref";
 
 
+/*
+ * 7)
+ * Find the most frequently checked task for each day
+ */
 create or replace procedure prcdr_frequently_checked_task(ref refcursor) as
 $$
 begin
@@ -177,6 +187,11 @@ $$ language plpgsql;
 -- fetch all in "ref";
 
 
+/*
+ * 8)
+ * Determine the duration of the last P2P check
+ * (time between 'Start' and 'Success'/'Failure')
+ */
 create or replace procedure prcdr_checking_time_duration(ref refcursor) as
 $$
 begin
