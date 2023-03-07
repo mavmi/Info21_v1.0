@@ -27,9 +27,17 @@ In the future, Whether a task belongs to a block will be determined by the name 
 
 - ~~[part1/P2P] Add TRIGGER for not be able to add P2P review with same Checks for different reviews~~
 
-- [part1/Check] Add TRIGGER for not be able to add Check to Task if the guy didn't do ParentTask of this task
+- ~~[part1/Check] Add TRIGGER for not be able to add Check to Task if the guy didn't do ParentTask of this task~~
 
-- [part1/P2P] Add TRIGGER for not be able to add different checking peer for Start and Success/Failure for one Check
+- ~~[part1/P2P] Add TRIGGER for not be able to add different checking peer for Start and Success/Failure for one Check~~
+
+- [part1/Friends] Add TRIGGER for not be able to add the same friends pairs: 'Gabriel' - 'Luisi', 'Luisi' - 'Gabriel'
+
+- [part1/Friends] Add TRIGGER for not be able to add yourself to friends
+
+- [part1/Recomendation] Add TRIGGER for not be able to add the same recomendation pair pairs: 'Gabriel' - 'Luisi', 'Gabriel' - 'Luisi'
+
+- [part1/Recomendation] Add TRIGGER for not be able to add yourself to recomendation
 
 - Maybe, create one file which will call all helpfull sql scripts?
 

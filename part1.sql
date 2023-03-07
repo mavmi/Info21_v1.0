@@ -36,7 +36,7 @@ begin
     insert into Peers values('Pirate', '1994-04-04');
     insert into Peers values('Strangler', '2000-05-05');
     insert into Peers values('Gabriel', '1998-09-19');
-    insert into Peers values('Yo_yo', '1977-06-20');
+    insert into Peers values('Luisi', '1977-06-20');
 end;
 $$ language plpgsql;
 
@@ -105,7 +105,7 @@ begin
      * 4. 'Pirate'      -> CPP1-CPP5
      * 5. 'Strangler'   -> A1-A8, SQL1
      * 6. 'Gabriel'     -> A1-A7, A8(2), SQL1-SQL2
-     * 7. 'Yo_yo'       -> SQL1-SQL2, SQL3(3)
+     * 7. 'Luisi'       -> SQL1-SQL2, SQL3(3)
      */
 
     insert into Checks values(1, 'Near_Muslim', 'DO1', '2022-12-01');
@@ -164,18 +164,18 @@ begin
     insert into Checks values(40, 'Strangler', 'SQL1', '2023-02-27');
     insert into Checks values(41, 'Gabriel', 'A8', '2023-02-27');
     insert into Checks values(42, 'Pirate', 'CPP5', '2023-02-27');
-    insert into Checks values(43, 'Yo_yo', 'SQL1', '2023-02-27');
+    insert into Checks values(43, 'Luisi', 'SQL1', '2023-02-27');
     insert into Checks values(44, 'Gabriel', 'SQL1', '2023-02-27');
     insert into Checks values(45, 'Wolf', 'CPP5', '2023-02-27');
 
     insert into Checks values(46, 'Gabriel', 'SQL2', '2023-03-01');
-    insert into Checks values(47, 'Yo_yo', 'SQL2', '2023-03-01');
+    insert into Checks values(47, 'Luisi', 'SQL2', '2023-03-01');
 
-    insert into Checks values(48, 'Yo_yo', 'SQL3', '2023-03-05');
+    insert into Checks values(48, 'Luisi', 'SQL3', '2023-03-05');
 
-    insert into Checks values(49, 'Yo_yo', 'SQL3', '2023-03-06');
+    insert into Checks values(49, 'Luisi', 'SQL3', '2023-03-06');
 
-    insert into Checks values(50, 'Yo_yo', 'SQL3', '2023-03-07');
+    insert into Checks values(50, 'Luisi', 'SQL3', '2023-03-07');
 end;
 $$ language plpgsql;
 
@@ -196,11 +196,11 @@ begin
         return;
     end if;
 
-    insert into P2P values(fnc_next_id('P2P'), 1, 'Yo_yo', 'Start', '16:00:57');
-    insert into P2P values(fnc_next_id('P2P'), 1, 'Yo_yo', 'Success', '17:00:25');
+    insert into P2P values(fnc_next_id('P2P'), 1, 'Luisi', 'Start', '16:00:57');
+    insert into P2P values(fnc_next_id('P2P'), 1, 'Luisi', 'Success', '17:00:25');
 
-    insert into P2P values(fnc_next_id('P2P'), 2, 'Yo_yo', 'Start', '16:18:57');
-    insert into P2P values(fnc_next_id('P2P'), 2, 'Yo_yo', 'Success', '17:00:25');
+    insert into P2P values(fnc_next_id('P2P'), 2, 'Luisi', 'Start', '16:18:57');
+    insert into P2P values(fnc_next_id('P2P'), 2, 'Luisi', 'Success', '17:00:25');
 
     insert into P2P values(fnc_next_id('P2P'), 3, 'Near_Muslim', 'Start', '15:00:40');
     insert into P2P values(fnc_next_id('P2P'), 3, 'Near_Muslim', 'Success', '15:26:22');
@@ -214,8 +214,8 @@ begin
     insert into P2P values(fnc_next_id('P2P'), 6, 'Near_Muslim', 'Start', '18:15:20');
     insert into P2P values(fnc_next_id('P2P'), 6, 'Near_Muslim', 'Success', '19:15:21');
 
-    insert into P2P values(fnc_next_id('P2P'), 7, 'Yo_yo', 'Start', '15:00:40');
-    insert into P2P values(fnc_next_id('P2P'), 7, 'Yo_yo', 'Success', '15:26:22');
+    insert into P2P values(fnc_next_id('P2P'), 7, 'Luisi', 'Start', '15:00:40');
+    insert into P2P values(fnc_next_id('P2P'), 7, 'Luisi', 'Success', '15:26:22');
 
     insert into P2P values(fnc_next_id('P2P'), 8, 'Strangler', 'Start', '19:30:21');
     insert into P2P values(fnc_next_id('P2P'), 8, 'Strangler', 'Success', '20:00:00');
@@ -235,11 +235,11 @@ begin
     insert into P2P values(fnc_next_id('P2P'), 13, 'Wolf', 'Start', '15:00:40');
     insert into P2P values(fnc_next_id('P2P'), 13, 'Wolf', 'Success', '15:26:22');
 
-    insert into P2P values(fnc_next_id('P2P'), 14, 'Yo_yo', 'Start', '15:00:40');
-    insert into P2P values(fnc_next_id('P2P'), 14, 'Yo_yo', 'Success', '15:26:22');
+    insert into P2P values(fnc_next_id('P2P'), 14, 'Luisi', 'Start', '15:00:40');
+    insert into P2P values(fnc_next_id('P2P'), 14, 'Luisi', 'Success', '15:26:22');
 
-    insert into P2P values(fnc_next_id('P2P'), 15, 'Yo_yo', 'Start', '12:13:14');
-    insert into P2P values(fnc_next_id('P2P'), 15, 'Yo_yo', 'Failure', '13:14:15');
+    insert into P2P values(fnc_next_id('P2P'), 15, 'Luisi', 'Start', '12:13:14');
+    insert into P2P values(fnc_next_id('P2P'), 15, 'Luisi', 'Failure', '13:14:15');
 
     insert into P2P values(fnc_next_id('P2P'), 16, 'Wolf', 'Start', '19:30:21');
     insert into P2P values(fnc_next_id('P2P'), 16, 'Wolf', 'Success', '20:00:00');
@@ -259,8 +259,8 @@ begin
     insert into P2P values(fnc_next_id('P2P'), 21, 'Pirate', 'Start', '20:15:21');
     insert into P2P values(fnc_next_id('P2P'), 21, 'Pirate', 'Success', '21:10:05');
 
-    insert into P2P values(fnc_next_id('P2P'), 22, 'Yo_yo', 'Start', '14:16:07');
-    insert into P2P values(fnc_next_id('P2P'), 22, 'Yo_yo', 'Success', '15:07:55');
+    insert into P2P values(fnc_next_id('P2P'), 22, 'Luisi', 'Start', '14:16:07');
+    insert into P2P values(fnc_next_id('P2P'), 22, 'Luisi', 'Success', '15:07:55');
 
     insert into P2P values(fnc_next_id('P2P'), 23, 'Strangler', 'Start', '15:00:40');
     insert into P2P values(fnc_next_id('P2P'), 23, 'Strangler', 'Success', '15:26:22');
@@ -271,11 +271,11 @@ begin
     insert into P2P values(fnc_next_id('P2P'), 25, 'Wolf', 'Start', '14:16:07');
     insert into P2P values(fnc_next_id('P2P'), 25, 'Wolf', 'Success', '15:07:55');
 
-    insert into P2P values(fnc_next_id('P2P'), 26, 'Yo_yo', 'Start', '14:16:07');
-    insert into P2P values(fnc_next_id('P2P'), 26, 'Yo_yo', 'Success', '15:07:55');
+    insert into P2P values(fnc_next_id('P2P'), 26, 'Luisi', 'Start', '14:16:07');
+    insert into P2P values(fnc_next_id('P2P'), 26, 'Luisi', 'Success', '15:07:55');
 
-    insert into P2P values(fnc_next_id('P2P'), 27, 'Yo_yo', 'Start', '19:30:21');
-    insert into P2P values(fnc_next_id('P2P'), 27, 'Yo_yo', 'Success', '20:00:00');
+    insert into P2P values(fnc_next_id('P2P'), 27, 'Luisi', 'Start', '19:30:21');
+    insert into P2P values(fnc_next_id('P2P'), 27, 'Luisi', 'Success', '20:00:00');
 
     insert into P2P values(fnc_next_id('P2P'), 28, 'Wolf', 'Start', '20:15:21');
     insert into P2P values(fnc_next_id('P2P'), 28, 'Wolf', 'Success', '21:10:05');
@@ -306,8 +306,8 @@ begin
     insert into P2P values(fnc_next_id('P2P'), 37, 'Near_Muslim', 'Start', '16:00:57');
     insert into P2P values(fnc_next_id('P2P'), 37, 'Near_Muslim', 'Failure', '17:00:25');
 
-    insert into P2P values(fnc_next_id('P2P'), 38, 'Yo_yo', 'Start', '20:15:21');
-    insert into P2P values(fnc_next_id('P2P'), 38, 'Yo_yo', 'Success', '21:10:05');
+    insert into P2P values(fnc_next_id('P2P'), 38, 'Luisi', 'Start', '20:15:21');
+    insert into P2P values(fnc_next_id('P2P'), 38, 'Luisi', 'Success', '21:10:05');
 
     insert into P2P values(fnc_next_id('P2P'), 39, 'Pirate', 'Start', '14:16:07');
     insert into P2P values(fnc_next_id('P2P'), 39, 'Pirate', 'Success', '15:07:55');
@@ -493,33 +493,33 @@ begin
         return;
     end if;
 
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Yo_yo', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Yo_yo', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Luisi', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Luisi', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Near_Muslim', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Pirate', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Gabriel', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Near_Muslim', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Yo_yo', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Luisi', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Strangler', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Gabriel', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Pirate', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Pirate', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Wolf', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Wolf', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Yo_yo', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Sprat_eater', 'Yo_yo', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Luisi', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Sprat_eater', 'Luisi', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Wolf', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Sprat_eater', 'Strangler', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Sprat_eater', 'Strangler', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Sprat_eater', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Sprat_eater', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Pirate', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Yo_yo', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Luisi', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Sprat_eater', 'Strangler', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Gabriel', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Wolf', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Pirate', 'Yo_yo', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Wolf', 'Yo_yo', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Pirate', 'Luisi', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Wolf', 'Luisi', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Sprat_eater', 'Wolf', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Pirate', 'Near_Muslim', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Wolf', 'Pirate', 1);
@@ -530,19 +530,19 @@ begin
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Gabriel', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Pirate', 'Near_Muslim', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Near_Muslim', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Wolf', 'Yo_yo', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Wolf', 'Luisi', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Wolf', 'Pirate', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Wolf', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Wolf', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Pirate', 'Gabriel', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Yo_yo', 'Wolf', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Wolf', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Pirate', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Wolf', 'Pirate', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Near_Muslim', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Yo_yo', 'Near_Muslim', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Yo_yo', 'Near_Muslim', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Yo_yo', 'Strangler', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Yo_yo', 'Gabriel', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Near_Muslim', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Near_Muslim', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Strangler', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Gabriel', 1);
 end
 $$ language plpgsql;
 
@@ -561,11 +561,28 @@ begin
         return;
     end if;
 
+    /*
+        'Wolf',
+        'Sprat_eater'
+        'Near_Muslim'
+        'Pirate', 
+        'Strangler', 
+        'Gabriel',
+        'Luisi'
+    */
+
     insert into Friends values(fnc_next_id('Friends'), 'Wolf', 'Sprat_eater');
+    insert into Friends values(fnc_next_id('Friends'), 'Wolf', 'Luisi');
+    insert into Friends values(fnc_next_id('Friends'), 'Wolf', 'Gabriel');
     insert into Friends values(fnc_next_id('Friends'), 'Sprat_eater', 'Near_Muslim');
+    insert into Friends values(fnc_next_id('Friends'), 'Sprat_eater', 'Luisi');
+    insert into Friends values(fnc_next_id('Friends'), 'Near_Muslim', 'Gabriel');
     insert into Friends values(fnc_next_id('Friends'), 'Near_Muslim', 'Pirate');
+    insert into Friends values(fnc_next_id('Friends'), 'Pirate', 'Wolf');
     insert into Friends values(fnc_next_id('Friends'), 'Pirate', 'Strangler');
     insert into Friends values(fnc_next_id('Friends'), 'Strangler', 'Wolf');
+    insert into Friends values(fnc_next_id('Friends'), 'Luisi', 'Near_Muslim');
+    insert into Friends values(fnc_next_id('Friends'), 'Gabriel', 'Luisi');
 end;
 $$ language plpgsql;
 
@@ -585,10 +602,21 @@ begin
     end if;
 
     insert into Recommendations values(fnc_next_id('Recommendations'), 'Wolf', 'Near_Muslim');
+    insert into Recommendations values(fnc_next_id('Recommendations'), 'Wolf', 'Pirate');
+    insert into Recommendations values(fnc_next_id('Recommendations'), 'Wolf', 'Strangler');
     insert into Recommendations values(fnc_next_id('Recommendations'), 'Sprat_eater', 'Pirate');
-    insert into Recommendations values(fnc_next_id('Recommendations'), 'Near_Muslim', 'Strangler');
-    insert into Recommendations values(fnc_next_id('Recommendations'), 'Pirate', 'Near_Muslim');
+    insert into Recommendations values(fnc_next_id('Recommendations'), 'Near_Muslim', 'Luisi');
+    insert into Recommendations values(fnc_next_id('Recommendations'), 'Near_Muslim', 'Gabriel');
+    insert into Recommendations values(fnc_next_id('Recommendations'), 'Pirate', 'Sprat_eater');
+    insert into Recommendations values(fnc_next_id('Recommendations'), 'Pirate', 'Gabriel');
+    insert into Recommendations values(fnc_next_id('Recommendations'), 'Strangler', 'Gabriel');
     insert into Recommendations values(fnc_next_id('Recommendations'), 'Strangler', 'Wolf');
+    insert into Recommendations values(fnc_next_id('Recommendations'), 'Strangler', 'Pirate');
+    insert into Recommendations values(fnc_next_id('Recommendations'), 'Strangler', 'Luisi');
+    insert into Recommendations values(fnc_next_id('Recommendations'), 'Gabriel', 'Sprat_eater');
+    insert into Recommendations values(fnc_next_id('Recommendations'), 'Luisi', 'Sprat_eater');
+    insert into Recommendations values(fnc_next_id('Recommendations'), 'Luisi', 'Pirate');
+    insert into Recommendations values(fnc_next_id('Recommendations'), 'Luisi', 'Gabriel');
 end;
 $$ language plpgsql;
 
