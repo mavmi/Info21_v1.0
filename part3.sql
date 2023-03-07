@@ -248,15 +248,45 @@ end;
 $$ language plpgsql;
 
 -- START PROCEDURE WITH REFCURSOR --
-call prcdr_passed_task_block('ref', 'A');
-fetch all in "ref";
+-- call prcdr_passed_task_block('ref', 'A');
+-- fetch all in "ref";
 
 
 
 /*
-1. Find all friends from friends table
-2. Find all peers which recomended of friends
-3. Find peer with the most counts of recomendation
+ * 10)
+ * Determine the peer for checking who was recommended by the peer's friends
+ * (peer with maximum count of recommendation from all friends)
  */
+create or replace procedure prcdr_recommended_peer(ref refcursor) as
+$$
+begin
+	open ref for
+		with cte_all_friends as (
+			select nickname, id, peer2 as peer
+			from peers
+				full join friends as f1 on peers.nickname = f1.peer1
+			union all
+			select nickname, id, peer1 as peer
+			from peers
+				full join friends as f2 on peers.nickname = f2.peer2
+			order by 1, 3
+		)
+		select distinct on (nickname) nickname as peer,
+			recommendedpeer
+		from(
+			select cte_af.nickname, r.recommendedpeer,
+				count(r.recommendedpeer)
+			from cte_all_friends as cte_af
+				join recommendations as r using(peer)
+			where cte_af.nickname != r.recommendedpeer
+			group by cte_af.nickname, r.recommendedpeer
+			order by cte_af.nickname, count desc
+		) as recommendations_count;
+end;
+$$ language plpgsql;
 
+-- START PROCEDURE WITH REFCURSOR --
+-- call prcdr_recommended_peer('ref');
+-- fetch all in "ref";
 

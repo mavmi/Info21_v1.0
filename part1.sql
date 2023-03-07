@@ -23,7 +23,7 @@ $$
 begin
     create table if not exists Peers(
         Nickname varchar primary key,
-        Bitrhday date
+        Birthday date
     );
 
     if (fill = false) then
@@ -562,13 +562,15 @@ begin
     end if;
 
     /*
-        'Wolf',
-        'Sprat_eater'
-        'Near_Muslim'
-        'Pirate', 
-        'Strangler', 
-        'Gabriel',
-        'Luisi'
+        Friends:
+
+        'Wolf' -> ['Gabriel'/'Luisi'/'Pirate'/'Sprat_eater'/'Strangler'],
+        'Sprat_eater' -> ['Luisi'/'Near_Muslim'/'Wolf']
+        'Near_Muslim' -> ['Gabriel'/'Luisi'/'Pirate'/'Sprat_eater']
+        'Pirate' -> ['Near_Muslim'/'Strangler'/'Wolf'], 
+        'Strangler' -> ['Pirate'/'Wolf'], 
+        'Gabriel' -> ['Luisi'/'Near_Muslim'/'Wolf'],
+        'Luisi' -> ['Gabriel'/'Near_Muslim'/'Sprat_eater'/'Wolf']
     */
 
     insert into Friends values(fnc_next_id('Friends'), 'Wolf', 'Sprat_eater');
