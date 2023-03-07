@@ -4,7 +4,7 @@
  * 	- if status is "start" - P2P.Check is just added record in the Checks
  * 	- if status isn't "start" - P2P.Check is already added Check in Checks table
  */
-create or replace procedure prcdr_p2p(
+create or replace procedure prcdr_fnc_p2p(
 	checked_peer varchar,
 	checker_peer varchar,
 	task_name varchar,
@@ -49,10 +49,10 @@ $$ language plpgsql;
 
 /*
  * Add a record to the Verter table:
- * 	the latest (by time) P2P checking of 'checked_peer' with 'task_name'
- * 	where P2P.State is 'Success'
+ * the latest (by time) P2P checking of 'checked_peer' with 'task_name'
+ * where P2P.State is 'Success'
  */
-create or replace procedure prcdr_verter(
+create or replace procedure prcdr_fnc_verter(
 	checked_peer varchar,
 	task_name varchar,
 	status check_status,
@@ -84,7 +84,7 @@ $$ language plpgsql;
 
 /*
  * after adding a record with the "start" status to the P2P table,
- * change the corresponding record in the TransferredPoints table
+ * to add the corresponding record in the TransferredPoints table
  */
 create or replace function trg_fnc_p2p_insert_transferred_poins() returns trigger as
 $$
@@ -110,7 +110,7 @@ execute procedure trg_fnc_p2p_insert_transferred_poins();
 /*
  * Check if adding record to the XP is correct:
  * 	- The number of XP does not exceed the maximum available
- * 	- State of checking must be 'Success'
+ * 	- Checked should be 'Success'
  */
 create or replace function trg_fnc_xp_check_correct_insert() returns trigger as
 $$
@@ -119,9 +119,9 @@ begin
 		(
 			select (new.XPAmount <= Tasks.MaxXP)
 			from Checks
-				join P2P on P2P."Check" = Checks.ID
+				join v_all_passing_checks as v_apch on v_apch.Checks_ID = Checks.ID
 				join Tasks on Tasks.Title = Checks.Task
-			where Checks.ID = new."Check" and P2P.State = 'Success'
+			where v_apch.resume_s is not null
 		)
 	) then
 		return new;
