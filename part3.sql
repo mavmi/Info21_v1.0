@@ -231,7 +231,7 @@ $$
 begin
 	open ref for
 		with cte_task_block_name as (
-			select title
+			select title as task
 			from Tasks
 			where substring(title from '.+?(?=\d{1,2})') = block_name
 			order by 1 DESC
@@ -240,8 +240,8 @@ begin
 		select v_apch.checked as Peer,
 			ch.Date as Day
 		from v_all_passing_checks as v_apch
+			join cte_task_block_name as cte_tbn using(task)
 			join Checks as ch on ch.ID = v_apch.checks_id
-			join cte_task_block_name as cte_tbn on cte_tbn.title = v_apch.task
 		where v_apch.resume_f is null
 		order by ch.Date;
 end;
