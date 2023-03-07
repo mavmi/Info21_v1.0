@@ -30,6 +30,7 @@ create or replace view v_all_passing_checks as (
 				and P2P.state != 'Start'
 			left join Verter on Verter."Check" = Checks.id
 				and Verter.state != 'Start'
+		where P2P.CheckingPeer is not null
 );
 
 

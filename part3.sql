@@ -218,11 +218,38 @@ $$ language plpgsql;
 -- fetch all in "ref";
 
 
+/*
+ * 9)
+ * Find all peers who have completed the whole 'block_name' 
+ * block of tasks and the completion date of the last task
+ */
+create or replace procedure prcdr_passed_task_block(
+	ref refcursor, 
+	block_name varchar
+) as
+$$
+begin
+	open ref for
+		with cte_task_block_name as (
+			select title
+			from Tasks
+			where substring(title from '.+?(?=\d{1,2})') = block_name
+			order by 1 DESC
+			limit 1
+		)
+		select v_apch.checked as Peer,
+			ch.Date as Day
+		from v_all_passing_checks as v_apch
+			join Checks as ch on ch.ID = v_apch.checks_id
+			join cte_task_block_name as cte_tbn on cte_tbn.title = v_apch.task
+		where v_apch.resume_f is null
+		order by ch.Date;
+end;
+$$ language plpgsql;
 
--- FOR_EX09: How to tacke the last task in block_task
-select *
-from Tasks
-where substring(title from '.+?(?=\d{1,2})') = 'A'
-order by 1 DESC
-limit 1;
+-- START PROCEDURE WITH REFCURSOR --
+call prcdr_passed_task_block('ref', 'A');
+fetch all in "ref";
 
+
+select * from v_all_passing_checks;
