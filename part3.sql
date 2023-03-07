@@ -252,4 +252,11 @@ call prcdr_passed_task_block('ref', 'A');
 fetch all in "ref";
 
 
-select * from v_all_passing_checks;
+
+/*
+1. Find all friends from friends table
+2. Find all peers which recomended of friends
+3. Find peer with the most counts of recomendation
+ */
+
+
