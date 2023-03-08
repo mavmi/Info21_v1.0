@@ -290,3 +290,118 @@ $$ language plpgsql;
 -- call prcdr_recommended_peer('ref');
 -- fetch all in "ref";
 
+
+select *
+from (
+		select count(*)
+		from(
+			select distinct peer 
+			from Checks 
+			where substring(task from '.+?(?=\d{1,2})') = 'SQL'
+		) as tmp
+	) as block1
+	cross join(
+		select count(*)
+		from(
+			select distinct peer 
+			from Checks 
+			where substring(task from '.+?(?=\d{1,2})') = 'A'
+		) as tmp
+	) as block2
+	cross join(
+		select count(*)
+		from(
+			select distinct peer 
+			from Checks 
+			where substring(task from '.+?(?=\d{1,2})') = 'SQL'
+			intersect
+			select distinct peer 
+			from Checks 
+			where substring(task from '.+?(?=\d{1,2})') = 'A'
+		) as tmp
+	) as bothblocks
+	cross join(
+		select count(*)
+		from(
+			select peer
+			from Checks
+			except
+			(select distinct peer
+			from Checks 
+			where substring(task from '.+?(?=\d{1,2})') = 'SQL'
+			union
+			select distinct peer 
+			from Checks 
+			where substring(task from '.+?(?=\d{1,2})') = 'A')
+		) as tmp
+	) as didntbloks;
+
+
+create or replace procedure prcdr_percenge_started_block(
+	ref refcursor,
+	block_1 varchar,
+	block_2 varchar
+) as
+$$
+declare
+	peers_number numeric := (select count(*) from peers);
+begin
+	open ref for
+		with cte_didblock as(
+			select distinct on (peer) peer,
+				substring(task from '.+?(?=\d{1,2})') as block_name
+			from Checks 
+			where substring(task from '.+?(?=\d{1,2})') = block_1
+			union all
+			select distinct on (peer) peer,
+				substring(task from '.+?(?=\d{1,2})') as block_name
+			from Checks 
+			where substring(task from '.+?(?=\d{1,2})') = block_2
+		)
+		select *--(c_block1 * 100 / peers_number)::int as StartedBlock1,
+			-- (c_block2 * 100 / peers_number)::int as StartedBlock2,
+			-- (c_both * 100 / peers_number)::int as StartedBothBlocks,
+			-- (c_dont_any * 100 / peers_number)::int as DidntStartAnyBlock
+		from (
+			select count(*) as c_block1
+			from cte_didblock
+			where block_name = block_1 and block_name != block_2
+		) as in_block_1
+		cross join (
+			select count(*) as c_block2
+			from cte_didblock
+			where block_name = block_2 and block_name != block_1
+		) as in_block_2
+		cross join (
+			select count(*) as c_both
+			from(
+				select distinct on (peer) peer 
+				from cte_didblock as c1
+					left join cte_didblock as c2 using(peer)
+				where c1.block_name != c2.block_name
+			) as tmp
+		) as in_both
+		cross join (
+			select (peers_number - count(*)) as c_dont_any
+			from (
+				select distinct peer
+				from cte_didblock
+			) as tmp
+		) as in_dont_any;
+end;
+$$ language plpgsql;
+
+-- START PROCEDURE WITH REFCURSOR --
+call prcdr_percenge_started_block('ref', 'SQL', 'A');
+fetch all in "ref";
+
+select *
+from (
+	select distinct on(peer) *
+	from Checks ch1 
+	where substring(task from '.+?(?=\d{1,2})') = 'SQL'
+) as ch1
+	left join Checks as ch2 on ch1.peer = ch2.peer 
+		and substring(ch2.task from '.+?(?=\d{1,2})') != 'SQL'
+where ch1.peer is not null and ch2.peer is not null
+--order by peer;
