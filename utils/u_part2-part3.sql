@@ -35,6 +35,24 @@ create or replace view v_all_passing_checks as (
 
 
 /*
+ * Table with all peers, their friends and ids of row in 'Friends' table
+ */
+create or replace view v_peers_friends as (
+	select nickname,
+		id,
+		(case
+			when peer1 = nickname then peer2
+			else peer1
+			end
+		) as friend
+	from Peers
+		join Friends on Friends.peer1 = Peers.nickname
+			or Friends.peer2 = Peers.nickname
+	order by 1
+);
+
+
+/*
  * Table with peers and all names of tasks' blocks which were started peer
  */
 create or replace view v_peers_tasks_blocks as (
