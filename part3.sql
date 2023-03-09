@@ -379,7 +379,6 @@ $$ language plpgsql;
 -- fetch all in "ref";
 
 
-
 /*
  * 12)
  * Determine 'n' peers with the greatest number of friends
