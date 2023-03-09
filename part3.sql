@@ -387,3 +387,22 @@ $$ language plpgsql;
 -- START PROCEDURE WITH REFCURSOR --
 -- call prcdr_percenge_started_block('ref', 'CPP', 'DO');
 -- fetch all in "ref";
+
+
+create or replace procedure prcdr_greates_friends_number(
+	ref refcursor,
+	n number
+) as
+$$
+begin
+	select nickname, id, (case
+     	when peer1 = nickname then peer2
+     	else peer1
+     	end
+    ) as friend
+	from Peers
+		join Friends on Friends.peer1 = Peers.nickname
+			or Friends.peer2 = Peers.nickname
+    order by 1
+end;
+$$ language plpgsql;
