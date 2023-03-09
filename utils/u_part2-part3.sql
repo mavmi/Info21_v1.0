@@ -41,6 +41,7 @@ create or replace view v_peers_tasks_blocks as (
 	order by peer
 );
 
+
 create or replace function fnc_is_peer_passed_block(block varchar)
 	returns table(peer varchar, task_block varchar, count numeric) as
 $$
@@ -49,14 +50,3 @@ $$
 			join v_peers_tasks_blocks as v_ptb1 on v_ptb1.peer = v_ptb.peer
 				and v_ptb1.task_block = 'CPP'
 $$ language sql;
-
-/*
- * Return next ID for 'table_name' table
- */
-create or replace function fnc_next_id(table_name varchar, out id bigint) as
-$$
-begin
-	execute format('select coalesce(max(id) + 1, 1) from %s', table_name)
-	into id;
-end;
-$$ language plpgsql;
