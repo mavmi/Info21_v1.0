@@ -262,26 +262,16 @@ create or replace procedure prcdr_recommended_peer(ref refcursor) as
 $$
 begin
 	open ref for
-		with cte_all_friends as (
-			select nickname, id, peer2 as peer
-			from peers
-				full join friends as f1 on peers.nickname = f1.peer1
-			union all
-			select nickname, id, peer1 as peer
-			from peers
-				full join friends as f2 on peers.nickname = f2.peer2
-			order by 1, 3
-		)
 		select distinct on (nickname) nickname as peer,
 			recommendedpeer
-		from(
-			select cte_af.nickname, r.recommendedpeer,
+		from (
+			select v_af.nickname, r.recommendedpeer,
 				count(r.recommendedpeer)
-			from cte_all_friends as cte_af
-				join recommendations as r using(peer)
-			where cte_af.nickname != r.recommendedpeer
-			group by cte_af.nickname, r.recommendedpeer
-			order by cte_af.nickname, count desc
+			from v_peers_friends as v_af
+				join recommendations as r on r.peer = v_af.friend
+			where v_af.nickname != r.recommendedpeer
+			group by v_af.nickname, r.recommendedpeer
+			order by v_af.nickname, count desc
 		) as recommendations_count;
 end;
 $$ language plpgsql;
