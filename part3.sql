@@ -220,11 +220,11 @@ $$ language plpgsql;
 
 /*
  * 9)
- * Find all peers who have completed the whole 'block_name' 
+ * Find all peers who have completed the whole 'block_name'
  * block of tasks and the completion date of the last task
  */
 create or replace procedure prcdr_passed_task_block(
-	ref refcursor, 
+	ref refcursor,
 	block_name varchar
 ) as
 $$
@@ -291,52 +291,55 @@ $$ language plpgsql;
 -- fetch all in "ref";
 
 
-select *
-from (
-		select count(*)
-		from(
-			select distinct peer 
-			from Checks 
-			where substring(task from '.+?(?=\d{1,2})') = 'SQL'
-		) as tmp
-	) as block1
-	cross join(
-		select count(*)
-		from(
-			select distinct peer 
-			from Checks 
-			where substring(task from '.+?(?=\d{1,2})') = 'A'
-		) as tmp
-	) as block2
-	cross join(
-		select count(*)
-		from(
-			select distinct peer 
-			from Checks 
-			where substring(task from '.+?(?=\d{1,2})') = 'SQL'
-			intersect
-			select distinct peer 
-			from Checks 
-			where substring(task from '.+?(?=\d{1,2})') = 'A'
-		) as tmp
-	) as bothblocks
-	cross join(
-		select count(*)
-		from(
-			select peer
-			from Checks
-			except
-			(select distinct peer
-			from Checks 
-			where substring(task from '.+?(?=\d{1,2})') = 'SQL'
-			union
-			select distinct peer 
-			from Checks 
-			where substring(task from '.+?(?=\d{1,2})') = 'A')
-		) as tmp
-	) as didntbloks;
+/*
+ * REALIZATION WITH CROSS JOIN:
+ *
+ * create or replace procedure prcdr_percenge_started_block(
+ * 	ref refcursor,
+ * 	block_1 varchar,
+ * 	block_2 varchar
+ * ) as
+ * $$
+ * declare
+ * 	peers_number numeric := (select count(*) from peers);
+ * begin
+ * 	open ref for
+ * 		select (block1 * 100 / peers_number)::int as StartedBlock1,
+ * 			(block2 * 100 / peers_number)::int as StartedBlock2,
+ * 			(block12 * 100 / peers_number)::int as StartedBothBlocks,
+ * 			((peers_number - (block1 + block2 + block12))
+ * 				* 100 / peers_number)::int as DidntStartAnyBlock
+ * 		from (
+ * 				select count(peer) as block1
+ * 				from fnc_is_peer_passed_block(block_1)
+ * 				where count = 1
+ * 			) as block1
+ * 			cross join (
+ * 				select count(peer) as block2
+ * 				from fnc_is_peer_passed_block(block_2)
+ * 				where count = 1
+ * 			) as block2
+ * 			cross join (
+ * 				select count(*) as block12
+ * 				from fnc_is_peer_passed_block(block_1) as tmp
+ * 					join v_peers_tasks_blocks as v_ptb2 on v_ptb2.peer = tmp.peer
+ * 						and v_ptb2.task_block = block_2
+ * 				group by v_ptb2.peer
+ * 				limit 1
+ * 			) as both_blocks;
+ * end;
+ * $$ language plpgsql;
+ */
 
 
+/*
+ * 11)
+ * Determine the percentage of peers who:
+ * 	- Started only 'block_1'
+ * 	- Started only 'block_2'
+ * 	- Started both
+ * 	- Have not started any of them
+ */
 create or replace procedure prcdr_percenge_started_block(
 	ref refcursor,
 	block_1 varchar,
@@ -347,61 +350,40 @@ declare
 	peers_number numeric := (select count(*) from peers);
 begin
 	open ref for
-		with cte_didblock as(
-			select distinct on (peer) peer,
-				substring(task from '.+?(?=\d{1,2})') as block_name
-			from Checks 
-			where substring(task from '.+?(?=\d{1,2})') = block_1
-			union all
-			select distinct on (peer) peer,
-				substring(task from '.+?(?=\d{1,2})') as block_name
-			from Checks 
-			where substring(task from '.+?(?=\d{1,2})') = block_2
+		with cte_passed_peers as (
+			select (
+					(
+						select count(peer) as block1
+						from fnc_is_peer_passed_block(block_1)
+						where count = 1
+					) * 100 / peers_number
+				)::int as StartedBlock1,
+				(
+					(
+						select count(peer) as block2
+						from fnc_is_peer_passed_block(block_2)
+						where count = 1
+					) * 100 / peers_number
+				)::int as StartedBlock2,
+				(
+					coalesce((
+						select count(*) as block12
+						from fnc_is_peer_passed_block(block_1) as tmp
+							join v_peers_tasks_blocks as v_ptb2 using(peer)
+						where v_ptb2.task_block = block_2
+						group by v_ptb2.peer
+						limit 1
+					), 0) * 100 / peers_number
+				)::int as StartedBothBlocks
 		)
-		select *--(c_block1 * 100 / peers_number)::int as StartedBlock1,
-			-- (c_block2 * 100 / peers_number)::int as StartedBlock2,
-			-- (c_both * 100 / peers_number)::int as StartedBothBlocks,
-			-- (c_dont_any * 100 / peers_number)::int as DidntStartAnyBlock
-		from (
-			select count(*) as c_block1
-			from cte_didblock
-			where block_name = block_1 and block_name != block_2
-		) as in_block_1
-		cross join (
-			select count(*) as c_block2
-			from cte_didblock
-			where block_name = block_2 and block_name != block_1
-		) as in_block_2
-		cross join (
-			select count(*) as c_both
-			from(
-				select distinct on (peer) peer 
-				from cte_didblock as c1
-					left join cte_didblock as c2 using(peer)
-				where c1.block_name != c2.block_name
-			) as tmp
-		) as in_both
-		cross join (
-			select (peers_number - count(*)) as c_dont_any
-			from (
-				select distinct peer
-				from cte_didblock
-			) as tmp
-		) as in_dont_any;
+		select *,
+			(
+				100 - (StartedBlock1 + StartedBlock2 + StartedBothBlocks)
+			) as DidntStartAnyBlock
+		from cte_passed_peers;
 end;
 $$ language plpgsql;
 
 -- START PROCEDURE WITH REFCURSOR --
-call prcdr_percenge_started_block('ref', 'SQL', 'A');
-fetch all in "ref";
-
-select *
-from (
-	select distinct on(peer) *
-	from Checks ch1 
-	where substring(task from '.+?(?=\d{1,2})') = 'SQL'
-) as ch1
-	left join Checks as ch2 on ch1.peer = ch2.peer 
-		and substring(ch2.task from '.+?(?=\d{1,2})') != 'SQL'
-where ch1.peer is not null and ch2.peer is not null
---order by peer;
+-- call prcdr_percenge_started_block('ref', 'CPP', 'DO');
+-- fetch all in "ref";

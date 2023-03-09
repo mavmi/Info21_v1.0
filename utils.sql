@@ -34,6 +34,22 @@ create or replace view v_all_passing_checks as (
 );
 
 
+create or replace view v_peers_tasks_blocks as (
+	select peer, substring(task from '.+?(?=\d{1,2})') as task_block
+	from Checks
+	group by peer, substring(task from '.+?(?=\d{1,2})')
+	order by peer
+);
+
+create or replace function fnc_is_peer_passed_block(block varchar)
+	returns table(peer varchar, task_block varchar, count numeric) as
+$$
+		select v_ptb.peer, v_ptb.task_block, count(v_ptb.peer) over (partition by v_ptb.peer)
+		from v_peers_tasks_blocks as v_ptb
+			join v_peers_tasks_blocks as v_ptb1 on v_ptb1.peer = v_ptb.peer
+				and v_ptb1.task_block = 'CPP'
+$$ language sql;
+
 /*
  * Return next ID for 'table_name' table
  */
