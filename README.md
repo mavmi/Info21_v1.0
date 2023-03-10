@@ -58,6 +58,7 @@ In the future, Whether a task belongs to a block will be determined by the name 
 		- same numbers of checks of one task: four checks of 'CPP1' and 'CPP2' on one day
 	COMPLETED 6. [Tasks] Add some blocks besides CPP
 	7. [Some tables] peers which completed the whole given block of tasks
+	8. [Checks] One Peer passed one task twice on Success with different XP
 
 
 

@@ -109,7 +109,8 @@ begin
 			order by 1
 		)
 		select checked.Peer,
-			(coalesce(total_plus_count, 0) - coalesce(total_minus_count, 0)) as PointsChange
+			(coalesce(total_plus_count, 0)
+				- coalesce(total_minus_count, 0)) as PointsChange
 		from cte_checking
 			full join (
 				select
@@ -143,7 +144,8 @@ begin
 			order by 1
 		)
 		select peer2_count.Peer,
-			(coalesce(total_plus_count, 0) - coalesce(total_minus_count, 0)) as PointsChange
+			(coalesce(total_plus_count, 0)
+				- coalesce(total_minus_count, 0)) as PointsChange
 		from cte_peer1_count
 			full join (
 				select peer2 as Peer, count(peer2) as total_minus_count
@@ -402,3 +404,70 @@ $$ language plpgsql;
 -- START PROCEDURE WITH REFCURSOR --
 -- call prcdr_greates_friends_number('ref', 5);
 -- fetch all in "ref";
+
+
+/*
+ * 12)
+ * Determine the percentage of peers who have successfully
+ * and unsuccessfully passed a check on their birthday
+ */
+create or replace procedure prcdr_passed_on_birthday(ref refcursor) as
+$$
+begin
+	open ref for
+		with cte_states_count as (
+			select (case
+						when resume_f is null then resume_s
+						else resume_f END
+					) as state,
+				count(*)
+			from v_all_passing_checks as v_alch
+				join Peers as p on p.nickname = v_alch.checked
+					and extract(month from p.birthday)
+						= extract(month from v_alch.checks_date)
+					and extract(day from p.birthday)
+						= extract(day from v_alch.checks_date)
+			group by resume_f, resume_s
+		)
+		select (case cte_sc1.state
+					when 'S' then
+						round(
+							(cte_sc1.count * 100
+							/ (cte_sc1.count + cte_sc2.count)::numeric), 0
+						)
+					else round(
+							(cte_sc2.count * 100
+							/ (cte_sc1.count + cte_sc2.count)::numeric), 0
+						)
+					end
+				) as SuccessfulChecks,
+				(case cte_sc1.state
+					when 'F' then
+						round(
+							(cte_sc1.count * 100
+							/ (cte_sc1.count + cte_sc2.count)::numeric), 0
+						)
+					else round(
+							(cte_sc2.count * 100
+							/ (cte_sc1.count + cte_sc2.count)::numeric), 0
+						)
+					end
+				) as UnsuccessfulChecks
+		from cte_states_count as cte_sc1
+			join cte_states_count as cte_sc2 on cte_sc2.state != cte_sc1.state
+		limit 1;
+end;
+$$ language plpgsql;
+
+-- START PROCEDURE WITH REFCURSOR --
+-- call prcdr_passed_on_birthday('ref');
+-- fetch all in "ref";
+
+
+
+select checked,
+	sum(xpamount)
+from v_all_passing_checks as v_apch
+	join XP on XP."Check" = v_apch.checks_id and resume_f is null
+group by checked
+order by sum desc
