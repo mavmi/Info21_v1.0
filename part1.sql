@@ -187,6 +187,7 @@ begin
     insert into Checks values(49, 'Luisi', 'SQL3', '2023-03-06');
 
     insert into Checks values(50, 'Luisi', 'SQL3', '2023-03-07');
+    insert into Checks values(51, 'Sprat_eater', 'DO2', '2023-03-07'); --Repassing
 end;
 $$ language plpgsql;
 
@@ -354,6 +355,9 @@ begin
 
     insert into P2P values(fnc_next_id('P2P'), 50, 'Gabriel', 'Start', '14:16:07');
     insert into P2P values(fnc_next_id('P2P'), 50, 'Gabriel', 'Success', '15:07:55');
+
+    insert into P2P values(fnc_next_id('P2P'), 51, 'Pirate', 'Start', '21:16:07');
+    insert into P2P values(fnc_next_id('P2P'), 51, 'Pirate', 'Success', '21:40:55');
 end;
 $$ language plpgsql;
 
@@ -485,6 +489,9 @@ begin
 
     insert into Verter values(fnc_next_id('Verter'), 45, 'Start', '13:14:15');
     insert into Verter values(fnc_next_id('Verter'), 45, 'Success', '13:15:15');
+
+    insert into Verter values(fnc_next_id('Verter'), 51, 'Start', '21:41:00');
+    insert into Verter values(fnc_next_id('Verter'), 51, 'Success', '21:41:30');
 end;
 $$ language plpgsql;
 
@@ -554,6 +561,7 @@ begin
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Near_Muslim', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Strangler', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Gabriel', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Sprat_eater', 'Pirate', 1);
 end
 $$ language plpgsql;
 
@@ -689,6 +697,7 @@ begin
     insert into XP values(fnc_next_id('XP'), 46, 500);
     insert into XP values(fnc_next_id('XP'), 47, 500);
     insert into XP values(fnc_next_id('XP'), 50, 580);
+    insert into XP values(fnc_next_id('XP'), 51, 250);
 end;
 $$ language plpgsql;
 
