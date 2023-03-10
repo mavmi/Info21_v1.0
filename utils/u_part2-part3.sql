@@ -57,7 +57,8 @@ create or replace view v_peers_friends as (
  * Table with peers and all names of tasks' blocks which were started peer
  */
 create or replace view v_peers_tasks_blocks as (
-	select peer, substring(task from '.+?(?=\d{1,2})') as task_block
+	select peer, 
+		substring(task from '.+?(?=\d{1,2})') as task_block
 	from Checks
 	group by peer, substring(task from '.+?(?=\d{1,2})')
 	order by peer
@@ -65,16 +66,20 @@ create or replace view v_peers_tasks_blocks as (
 
 
 /*
- * Return peers (who started 'task_block'), their started blocks of tasks
+ * Return peers (who started 'block'), their started blocks of tasks
  * and count of started blocks
  */
 create or replace function fnc_is_peer_passed_block(block varchar)
-	returns table(peer varchar, task_block varchar, count numeric) as
+	returns table(peer varchar, block_name varchar, count bigint) as
 $$
+begin
+	return query(
 		select v_ptb.peer,
-			v_ptb.task_block,
+			v_ptb.task_block::varchar,
 			count(v_ptb.peer) over (partition by v_ptb.peer)
 		from v_peers_tasks_blocks as v_ptb
 			join v_peers_tasks_blocks as v_ptb1 on v_ptb1.peer = v_ptb.peer
-				and v_ptb1.task_block = task_block
-$$ language sql;
+				and v_ptb1.task_block = block
+	);
+end;
+$$ language plpgsql;

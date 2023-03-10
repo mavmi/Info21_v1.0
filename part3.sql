@@ -358,14 +358,14 @@ begin
 					) * 100 / peers_number
 				)::int as StartedBlock2,
 				(
-					coalesce((
+					(
 						select count(*) as block12
 						from fnc_is_peer_passed_block(block_1) as tmp
-							join v_peers_tasks_blocks as v_ptb2 using(peer)
-						where v_ptb2.task_block = block_2
-						group by v_ptb2.peer
-						limit 1
-					), 0) * 100 / peers_number
+							join v_peers_tasks_blocks as v_ptb2 
+								on v_ptb2.peer = tmp.peer
+								and tmp.block_name = block_2 
+								and v_ptb2.task_block = block_2
+					) * 100 / peers_number
 				)::int as StartedBothBlocks
 		)
 		select *,
@@ -377,8 +377,8 @@ end;
 $$ language plpgsql;
 
 -- START PROCEDURE WITH REFCURSOR --
--- call prcdr_percenge_started_block('ref', 'CPP', 'DO');
--- fetch all in "ref";
+call prcdr_percenge_started_block('ref', 'CPP', 'DO');
+fetch all in "ref";
 
 
 /*
@@ -465,17 +465,39 @@ $$ language plpgsql;
 
 
 
-select checked,
-	sum(xpamount)
-from v_all_passing_checks as v_apch
-	join XP on XP."Check" = v_apch.checks_id and resume_f is null
-group by checked
-order by sum desc
+/*
+ * 14)
+ * Determine the total amount of XP gained by each peer
+ */
+create or replace procedure prcdr_total_peer_xp_amount(ref refcursor) as
+$$
+begin
+	open ref for
+		with cte_peers_xp as (
+			select
+				checked,
+				task,
+				max(xpamount)
+			from v_all_passing_checks as v_apch
+				join XP on XP."Check" = v_apch.checks_id and resume_f is null
+			group by checked, task
+			order by v_apch.checked, v_apch.task
+		)
+		select checked as Peer,
+			sum(max) as XP
+		from cte_peers_xp
+		group by checked
+		order by XP desc;
+end;
+$$ language plpgsql;
 
-select checked,
-	task,
-    xpamount,
-    count(task) over (partition by checked, task)
-from v_all_passing_checks as v_apch
-	join XP on XP."Check" = v_apch.checks_id and resume_f is null
-order by checked, task
+-- START PROCEDURE WITH REFCURSOR --
+-- call prcdr_total_peer_xp_amount('ref');
+-- fetch all in "ref";
+
+
+select *
+from fnc_is_peer_passed_block('CPP') as tmp
+	join v_peers_tasks_blocks as v_ptb2 
+		on v_ptb2.peer = tmp.peer
+		and v_ptb2.task_block = 'DO';
