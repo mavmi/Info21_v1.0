@@ -379,20 +379,27 @@ $$ language plpgsql;
 -- fetch all in "ref";
 
 
+
+/*
+ * 12)
+ * Determine 'n' peers with the greatest number of friends
+ */
 create or replace procedure prcdr_greates_friends_number(
 	ref refcursor,
-	n number
+	n bigint
 ) as
 $$
 begin
-	select nickname, id, (case
-     	when peer1 = nickname then peer2
-     	else peer1
-     	end
-    ) as friend
-	from Peers
-		join Friends on Friends.peer1 = Peers.nickname
-			or Friends.peer2 = Peers.nickname
-    order by 1
+	open ref for
+		select nickname as Peer,
+			count(friend) as FriendsCount
+		from v_peers_friends
+		group by nickname
+		order by FriendsCount desc
+		limit n;
 end;
 $$ language plpgsql;
+
+-- START PROCEDURE WITH REFCURSOR --
+-- call prcdr_greates_friends_number('ref', 5);
+-- fetch all in "ref";
