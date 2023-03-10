@@ -100,8 +100,8 @@ begin
     /*
      * Tasks pull:
      * 1. 'Wolf'        -> CPP1-CPP4, CPP5(2)
-     * 2. 'Sprat_eater' -> DO1(2), DO2, CPP1, CPP2(2), CPP3
-     * 3. 'Near_Muslim' -> DO1-DO6, CPP1
+     * 2. 'Sprat_eater' -> DO1(2), DO2(2), CPP1, CPP2(2), CPP3
+     * 3. 'Near_Muslim' -> DO1-DO6, CPP1, SQL1
      * 4. 'Pirate'      -> CPP1-CPP5
      * 5. 'Strangler'   -> A1-A8, SQL1
      * 6. 'Gabriel'     -> A1-A7, A8(2), SQL1-SQL2
@@ -188,6 +188,7 @@ begin
 
     insert into Checks values(50, 'Luisi', 'SQL3', '2023-03-07');
     insert into Checks values(51, 'Sprat_eater', 'DO2', '2023-03-07'); --Repassing
+    insert into Checks values(52, 'Near_Muslim', 'SQL1', '2023-03-07');
 end;
 $$ language plpgsql;
 
@@ -358,6 +359,9 @@ begin
 
     insert into P2P values(fnc_next_id('P2P'), 51, 'Pirate', 'Start', '21:16:07');
     insert into P2P values(fnc_next_id('P2P'), 51, 'Pirate', 'Success', '21:40:55');
+
+    insert into P2P values(fnc_next_id('P2P'), 52, 'Pirate', 'Start', '23:00:05');
+    insert into P2P values(fnc_next_id('P2P'), 52, 'Pirate', 'Success', '23:30:55');
 end;
 $$ language plpgsql;
 
@@ -562,6 +566,7 @@ begin
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Strangler', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Gabriel', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Sprat_eater', 'Pirate', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Pirate', 1);
 end
 $$ language plpgsql;
 
@@ -698,6 +703,7 @@ begin
     insert into XP values(fnc_next_id('XP'), 47, 500);
     insert into XP values(fnc_next_id('XP'), 50, 580);
     insert into XP values(fnc_next_id('XP'), 51, 250);
+    insert into XP values(fnc_next_id('XP'), 52, 1450);
 end;
 $$ language plpgsql;
 
