@@ -471,3 +471,11 @@ from v_all_passing_checks as v_apch
 	join XP on XP."Check" = v_apch.checks_id and resume_f is null
 group by checked
 order by sum desc
+
+select checked,
+	task,
+    xpamount,
+    count(task) over (partition by checked, task)
+from v_all_passing_checks as v_apch
+	join XP on XP."Check" = v_apch.checks_id and resume_f is null
+order by checked, task
