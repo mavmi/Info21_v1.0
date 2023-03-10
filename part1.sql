@@ -30,13 +30,13 @@ begin
         return;
     end if;
 
-    insert into Peers values('Wolf', '1990-03-01');
-    insert into Peers values('Sprat_eater', '1999-02-02');
-    insert into Peers values('Near_Muslim', '1980-11-03');
-    insert into Peers values('Pirate', '1994-04-04');
-    insert into Peers values('Strangler', '2000-05-05');
-    insert into Peers values('Gabriel', '1998-09-19');
-    insert into Peers values('Luisi', '1977-06-20');
+    insert into Peers values('Wolf', '1990-02-04');
+    insert into Peers values('Sprat_eater', '1999-02-05');
+    insert into Peers values('Near_Muslim', '1980-12-10');
+    insert into Peers values('Pirate', '1994-02-27');
+    insert into Peers values('Strangler', '2000-12-24');
+    insert into Peers values('Gabriel', '1998-02-12');
+    insert into Peers values('Luisi', '1977-03-07');
 end;
 $$ language plpgsql;
 
@@ -107,6 +107,17 @@ begin
      * 6. 'Gabriel'     -> A1-A7, A8(2), SQL1-SQL2
      * 7. 'Luisi'       -> SQL1-SQL2, SQL3(3)
      */
+
+     /*
+      * Successfull passeds on birthday [id, module, state]:
+      * 1. 'Wolf'        -> [27, CPP1, Success]
+      * 2. 'Sprat_eater' -> [28, CPP2, Failure]
+      * 3. 'Near_Muslim' -> [5, DO1, Success]
+      * 4. 'Pirate'      -> [didnt passed to birthday]
+      * 5. 'Strangler'   -> [12, A4, Success]
+      * 6. 'Gabriel'     -> [37, A8, Failure]
+      * 7. 'Luisi'       -> [50, SQL3, Success]
+      */
 
     insert into Checks values(1, 'Near_Muslim', 'DO1', '2022-12-01');
     insert into Checks values(2, 'Strangler', 'A1', '2022-12-01');
@@ -567,8 +578,8 @@ begin
         'Wolf' -> ['Gabriel'/'Luisi'/'Pirate'/'Sprat_eater'/'Strangler'],
         'Sprat_eater' -> ['Luisi'/'Near_Muslim'/'Wolf']
         'Near_Muslim' -> ['Gabriel'/'Luisi'/'Pirate'/'Sprat_eater']
-        'Pirate' -> ['Near_Muslim'/'Strangler'/'Wolf'], 
-        'Strangler' -> ['Pirate'/'Wolf'], 
+        'Pirate' -> ['Near_Muslim'/'Strangler'/'Wolf'],
+        'Strangler' -> ['Pirate'/'Wolf'],
         'Gabriel' -> ['Luisi'/'Near_Muslim'/'Wolf'],
         'Luisi' -> ['Gabriel'/'Near_Muslim'/'Sprat_eater'/'Wolf']
     */
@@ -884,7 +895,7 @@ begin
                 where
                     Checks.Peer = new.Peer and
                     Checks.Task = ParentTask and
-                    P2P.State = 'Success' and 
+                    P2P.State = 'Success' and
                         (Verter.State = 'Success' or Verter.State is null)
             ) = 0 then
         return null;
