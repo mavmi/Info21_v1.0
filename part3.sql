@@ -25,7 +25,7 @@ begin
 end;
 $$ language plpgsql;
 
-select * from fnc_readable_transferred_points() order by 1;
+-- select * from fnc_readable_transferred_points() order by 1;
 
 
 /*
@@ -361,10 +361,7 @@ begin
 					(
 						select count(*) as block12
 						from fnc_is_peer_passed_block(block_1) as tmp
-							join v_peers_tasks_blocks as v_ptb2 
-								on v_ptb2.peer = tmp.peer
-								and tmp.block_name = block_2 
-								and v_ptb2.task_block = block_2
+						where block_name = block_2
 					) * 100 / peers_number
 				)::int as StartedBothBlocks
 		)
@@ -377,8 +374,8 @@ end;
 $$ language plpgsql;
 
 -- START PROCEDURE WITH REFCURSOR --
-call prcdr_percenge_started_block('ref', 'CPP', 'DO');
-fetch all in "ref";
+-- call prcdr_percenge_started_block('ref', 'CPP', 'DO');
+-- fetch all in "ref";
 
 
 /*
@@ -496,8 +493,55 @@ $$ language plpgsql;
 -- fetch all in "ref";
 
 
-select *
-from fnc_is_peer_passed_block('CPP') as tmp
-	join v_peers_tasks_blocks as v_ptb2 
-		on v_ptb2.peer = tmp.peer
-		and v_ptb2.task_block = 'DO';
+/*
+ * 15)
+ * Determine all peers who did the given 'task_1' and 'task_2', 
+ * but did not do 'task_3' 
+ */
+create or replace procedure prcdr_did_peer_tasks(
+	ref refcursor,
+	task_1 varchar,
+	task_2 varchar,
+	task_3 varchar
+) as
+$$
+begin
+	open ref for
+		select peer
+		from fnc_is_peer_passed_block(task_1) as fnc_ipb
+		where block_name = task_2 and peer not in(
+			select peer 
+			from fnc_is_peer_passed_block(task_1) as fnc_ipb 
+			where block_name = task_3
+		);
+end;
+$$ language plpgsql;
+
+-- START PROCEDURE WITH REFCURSOR --
+-- call prcdr_did_peer_tasks('ref', 'SQL', 'A', 'DO');
+-- fetch all in "ref";
+
+
+with recursive cte_previous_tasks as (
+	(
+		select title as block_task,
+			ParentTask,
+			0 as count
+		from Tasks
+		--order by title desc
+		limit 1
+	)
+	union all
+	select t.title as block_task,
+		t.ParentTask,
+		(case substring(block_task from '.+?(?=\d{1,2})')
+			when substring(t.title from '.+?(?=\d{1,2})') 
+				then count + 1
+			else 0 end
+		) as count
+	from Tasks as t
+		join cte_previous_tasks as cte_pt on cte_pt.block_task = t.ParentTask
+			--or t.ParentTask is null
+)
+select * from cte_previous_tasks
+	limit 100;
