@@ -461,7 +461,6 @@ $$ language plpgsql;
 -- fetch all in "ref";
 
 
-
 /*
  * 14)
  * Determine the total amount of XP gained by each peer
@@ -495,8 +494,8 @@ $$ language plpgsql;
 
 /*
  * 15)
- * Determine all peers who did the given 'task_1' and 'task_2', 
- * but did not do 'task_3' 
+ * Determine all peers who did the given 'task_1' and 'task_2',
+ * but did not do 'task_3'
  */
 create or replace procedure prcdr_did_peer_tasks(
 	ref refcursor,
@@ -510,8 +509,8 @@ begin
 		select peer
 		from fnc_is_peer_passed_block(task_1) as fnc_ipb
 		where block_name = task_2 and peer not in(
-			select peer 
-			from fnc_is_peer_passed_block(task_1) as fnc_ipb 
+			select peer
+			from fnc_is_peer_passed_block(task_1) as fnc_ipb
 			where block_name = task_3
 		);
 end;
@@ -522,26 +521,85 @@ $$ language plpgsql;
 -- fetch all in "ref";
 
 
-with recursive cte_previous_tasks as (
+-- CANNOT CREATE DECITION FOR EX 16
+/*
+with recursive cte_previous_tasks(block_task, parent, count) as (
 	(
-		select title as block_task,
-			ParentTask,
-			0 as count
+		select title,
+			parenttask,
+			0
 		from Tasks
-		--order by title desc
-		limit 1
+		where title = 'DO2'
 	)
 	union all
-	select t.title as block_task,
-		t.ParentTask,
-		(case substring(block_task from '.+?(?=\d{1,2})')
-			when substring(t.title from '.+?(?=\d{1,2})') 
-				then count + 1
-			else 0 end
-		) as count
+	select t.title,
+		parenttask,
+		count + 1
 	from Tasks as t
-		join cte_previous_tasks as cte_pt on cte_pt.block_task = t.ParentTask
-			--or t.ParentTask is null
+		join cte_previous_tasks as cte_pt 
+			on cte_pt.parent = t.title
 )
 select * from cte_previous_tasks
 	limit 100;
+
+
+
+with 
+	recursive cte_previous_tasks(block_task, parent, count) as (
+		(
+			select title,
+				parenttask,
+				0
+			from cte_all_tasks
+			where id = 1
+		)
+		union all
+		select t.title,
+			parenttask,
+			count + 1
+		from Tasks as t
+			join cte_previous_tasks as cte_pt 
+				on cte_pt.parent = t.title
+	),
+	cte_all_tasks as (
+		select *, row_number() over () as id
+		from tasks
+	)
+select * from cte_previous_tasks;
+
+with
+  recursive r(n) as (
+    values(1)
+
+    union all
+
+    select n + 1
+    from r
+    where n < 5
+    ),
+
+  a2(n) as (
+    select 99)
+
+(
+  select n from r
+  union all
+  select n from a2
+)
+order by n desc;
+
+-- substring(block_task from '.+?(?=\d{1,2})')
+*/
+
+select v_apch.resume_f,
+	v_apch.resume_s,
+	v_apch.checks_id, 
+	v_apch.task,
+	v_apch.Checks_Date 
+	-- XP.XPAmount as scores,
+	-- Tasks.MaxXP as max_scores
+from v_all_passing_checks as v_apch
+	--join XP on XP."Check" = v_apch.checks_id
+	--join Tasks on Tasks.Title = v_apch.task
+--where resume_f is null;
+order by v_apch.Checks_Date
