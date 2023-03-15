@@ -36,6 +36,34 @@ create or replace view v_all_passing_checks as (
 
 
 /*
+ * Same as view v_all_passing_checks but it merge columns
+ * 'resume_f' and 'resume_s' to one column 'resume'
+ */
+create or replace view v_all_passing_checks1 as (
+		select Checks.ID as Checks_ID,
+			Checks.Peer as Checked,
+			P2P.CheckingPeer as Checking,
+			Checks.Task as Task,
+			P2P.State as P2P_state,
+			Verter.State as Verter_state,
+			(case
+				when Verter.state = 'Failure' or P2P.state = 'Failure' then
+					'F'
+				when (Verter.state = 'Success' or P2P.state = 'Success'
+					and Verter.state is null) then
+					'S'
+				end
+			) as resume
+		from Checks
+			left join P2P on P2P."Check" = Checks.id
+				and P2P.state != 'Start'
+			left join Verter on Verter."Check" = Checks.id
+				and Verter.state != 'Start'
+		where P2P.CheckingPeer is not null
+);
+
+
+/*
  * Table with all peers, their friends and ids of row in 'Friends' table
  */
 create or replace view v_peers_friends as (
@@ -57,7 +85,7 @@ create or replace view v_peers_friends as (
  * Table with peers and all names of tasks' blocks which were started peer
  */
 create or replace view v_peers_tasks_blocks as (
-	select peer, 
+	select peer,
 		substring(task from '.+?(?=\d{1,2})') as task_block
 	from Checks
 	group by peer, substring(task from '.+?(?=\d{1,2})')
