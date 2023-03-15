@@ -536,7 +536,7 @@ with recursive cte_previous_tasks(block_task, parent, count) as (
 		parenttask,
 		count + 1
 	from Tasks as t
-		join cte_previous_tasks as cte_pt 
+		join cte_previous_tasks as cte_pt
 			on cte_pt.parent = t.title
 )
 select * from cte_previous_tasks
@@ -544,7 +544,7 @@ select * from cte_previous_tasks
 
 
 
-with 
+with
 	recursive cte_previous_tasks(block_task, parent, count) as (
 		(
 			select title,
@@ -558,7 +558,7 @@ with
 			parenttask,
 			count + 1
 		from Tasks as t
-			join cte_previous_tasks as cte_pt 
+			join cte_previous_tasks as cte_pt
 				on cte_pt.parent = t.title
 	),
 	cte_all_tasks as (
@@ -593,9 +593,9 @@ order by n desc;
 
 select v_apch.resume_f,
 	v_apch.resume_s,
-	v_apch.checks_id, 
+	v_apch.checks_id,
 	v_apch.task,
-	v_apch.Checks_Date 
+	v_apch.Checks_Date
 	-- XP.XPAmount as scores,
 	-- Tasks.MaxXP as max_scores
 from v_all_passing_checks as v_apch
@@ -603,3 +603,21 @@ from v_all_passing_checks as v_apch
 	--join Tasks on Tasks.Title = v_apch.task
 --where resume_f is null;
 order by v_apch.Checks_Date
+
+create sequence if not exists seq
+	start 1,
+    increment 1;
+
+
+
+select *, count(*) over (partition by checks_date)
+from(
+select *,  lag(resum, 1, '-') over (partition by checks_date order by checks_id) as l
+from (
+select checks_id, checks_date,
+	( case
+     	when resume_f is null then 'S' else 'F' end
+      ) as resum
+from v_all_passing_checks
+) as f ) as d
+where resum = 'S' and (l = 'S' or l = '-')
