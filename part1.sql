@@ -121,7 +121,7 @@ begin
 
     insert into Checks values(1, 'Near_Muslim', 'DO1', '2022-12-01');
     insert into Checks values(2, 'Strangler', 'A1', '2022-12-01');
-    insert into Checks values(3, 'Gabriel', 'A1', '202-12-01');
+    insert into Checks values(3, 'Gabriel', 'A1', '2022-12-01');
 
     insert into Checks values(4, 'Gabriel', 'A2', '2022-12-03');
 
