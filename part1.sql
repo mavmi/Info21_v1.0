@@ -133,7 +133,7 @@ begin
     insert into Checks values(9, 'Strangler', 'A3', '2022-12-15');
     insert into Checks values(10, 'Gabriel', 'A4', '2022-12-15');
 
-    insert into Checks values(11, 'Near_Muslim', 'DO4', '2023-12-24');
+    insert into Checks values(11, 'Near_Muslim', 'DO4', '2022-12-24');
     insert into Checks values(12, 'Strangler', 'A4', '2022-12-24');
     insert into Checks values(13, 'Gabriel', 'A5', '2022-12-24');
 
