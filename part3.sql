@@ -37,11 +37,11 @@ create or replace function fnc_successfully_passed_tasks()
 $$
 begin
 	return query (
-		select v_all_passing_checks.Checked as Peer,
-			v_all_passing_checks.Task,
+		select v_all_passing_checks1.Checked as Peer,
+			v_all_passing_checks1.Task,
 			XP.XPAmount as XP
-		from v_all_passing_checks
-			join XP on XP."Check" = v_all_passing_checks.Checks_ID
+		from v_all_passing_checks1
+			join XP on XP."Check" = v_all_passing_checks1.Checks_ID
 		order by 1
 	);
 end;
