@@ -41,6 +41,7 @@ create or replace view v_all_passing_checks as (
  */
 create or replace view v_all_passing_checks1 as (
 		select Checks.ID as Checks_ID,
+			Checks.Date as Checks_Date,
 			Checks.Peer as Checked,
 			P2P.CheckingPeer as Checking,
 			Checks.Task as Task,
