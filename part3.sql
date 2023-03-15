@@ -413,18 +413,15 @@ $$
 begin
 	open ref for
 		with cte_states_count as (
-			select (case
-						when resume_f is null then resume_s
-						else resume_f END
-					) as state,
+			select resume as state,
 				count(*)
-			from v_all_passing_checks as v_alch
+			from v_all_passing_checks1 as v_alch
 				join Peers as p on p.nickname = v_alch.checked
 					and extract(month from p.birthday)
 						= extract(month from v_alch.checks_date)
 					and extract(day from p.birthday)
 						= extract(day from v_alch.checks_date)
-			group by resume_f, resume_s
+			group by resume
 		)
 		select (case cte_sc1.state
 					when 'S' then
@@ -591,33 +588,39 @@ order by n desc;
 -- substring(block_task from '.+?(?=\d{1,2})')
 */
 
-select v_apch.resume_f,
-	v_apch.resume_s,
-	v_apch.checks_id,
-	v_apch.task,
-	v_apch.Checks_Date
-	-- XP.XPAmount as scores,
-	-- Tasks.MaxXP as max_scores
-from v_all_passing_checks as v_apch
-	--join XP on XP."Check" = v_apch.checks_id
-	--join Tasks on Tasks.Title = v_apch.task
---where resume_f is null;
-order by v_apch.Checks_Date
 
-create sequence if not exists seq
-	start 1,
-    increment 1;
+/*
+ * 17)
+ * Determine days which have at least 'N' consecutive successful checks
+ */
+create or replace procedure prcdr_checks_lucky_days (
+	ref refcursor,
+	N numeric
+) as
+$$
+begin
+	open ref for
+		with
+			cte_previous_state as (
+				select *,
+					lag(resume, 1, '-') over (partition by checks_date order by checks_id) as l
+				from v_all_passing_checks1
+			),
+			cte_successful_count as (
+				select checks_date, count(*) over (partition by checks_date)
+				from cte_previous_state
+				where resume = 'S' and (l = 'S' or l = '-')
+			)
+		select checks_date
+		from (
+			select checks_date, count(*)
+			from cte_successful_count
+			group by checks_date
+		) as finale_count
+		where count > (N - 1);
+end;
+$$ language plpgsql;
 
-
-
-select *, count(*) over (partition by checks_date)
-from(
-select *,  lag(resum, 1, '-') over (partition by checks_date order by checks_id) as l
-from (
-select checks_id, checks_date,
-	( case
-     	when resume_f is null then 'S' else 'F' end
-      ) as resum
-from v_all_passing_checks
-) as f ) as d
-where resum = 'S' and (l = 'S' or l = '-')
+-- START PROCEDURE WITH REFCURSOR --
+call prcdr_checks_lucky_days('ref', 2);
+fetch all in "ref";
