@@ -743,14 +743,59 @@ begin
         return;
     end if;
 
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Wolf', '2023-02-01', '11:24:11', 1);
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Wolf', '2023-02-01', '23:42:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Wolf', '2022-12-01', '11:24:11', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Wolf', '2022-12-01', '23:42:00', 2);
 
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2023-02-03', '09:05:54', 1);
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2023-02-03', '23:42:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2022-12-01', '09:05:54', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2022-12-01', '23:42:00', 2);
 
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Sprat_eater', '2023-02-10', '13:44:01', 1);
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Sprat_eater', '2023-02-10', '23:42:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Sprat_eater', '2022-12-05', '13:44:01', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Sprat_eater', '2022-12-05', '23:42:00', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Pirate', '2022-12-07', '00:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Pirate', '2022-12-07', '23:59:59', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2022-12-10', '23:59:59', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2022-12-11', '02:42:59', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2022-12-11', '05:41:34', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2022-12-11', '20:30:47', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2022-12-28', '20:30:47', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2022-12-29', '00:49:44', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2022-12-30', '13:49:44', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2022-12-31', '05:17:02', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Pirate', '2022-12-30', '19:07:45', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Pirate', '2022-12-31', '03:17:55', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-01-01', '00:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-01-01', '23:59:59', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-01-10', '08:50:52', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-01-10', '17:04:02', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2023-01-20', '15:59:59', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2023-01-20', '23:59:52', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-01-30', '09:41:34', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-01-30', '20:00:47', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2023-02-04', '00:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2023-02-05', '00:50:44', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Sprat_eater', '2023-02-16', '13:49:44', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Sprat_eater', '2023-02-17', '05:17:02', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-02-25', '19:07:45', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-02-25', '22:14:04', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-03-07', '00:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-03-08', '09:04:16', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-03-08', '08:50:52', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-03-08', '17:04:02', 2);
 end;
 $$ language plpgsql;
 
