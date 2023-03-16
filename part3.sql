@@ -518,75 +518,38 @@ $$ language plpgsql;
 -- fetch all in "ref";
 
 
--- CANNOT CREATE DECITION FOR EX 16
 /*
-with recursive cte_previous_tasks(block_task, parent, count) as (
-	(
-		select title,
-			parenttask,
-			0
-		from Tasks
-		where title = 'DO2'
-	)
-	union all
-	select t.title,
-		parenttask,
-		count + 1
-	from Tasks as t
-		join cte_previous_tasks as cte_pt
-			on cte_pt.parent = t.title
-)
-select * from cte_previous_tasks
-	limit 100;
-
-
-
-with
-	recursive cte_previous_tasks(block_task, parent, count) as (
-		(
+ * 16)
+ * Output the number of mandatory preceding tasks for each task
+ * using recursive common table expression
+ */
+create or replace procedure prcdr_preceding_tasks(ref refcursor) as
+$$
+begin
+	open ref for
+		with recursive cte_tasks_count as (
 			select title,
-				parenttask,
-				0
-			from cte_all_tasks
-			where id = 1
+				0 as count,
+				parenttask
+			from tasks
+			where parenttask is null
+			union all
+			select t.title,
+				count + 1,
+				t.parenttask
+			from tasks as t
+				join cte_tasks_count as cte_tc on cte_tc.title = t.parenttask
 		)
-		union all
-		select t.title,
-			parenttask,
-			count + 1
-		from Tasks as t
-			join cte_previous_tasks as cte_pt
-				on cte_pt.parent = t.title
-	),
-	cte_all_tasks as (
-		select *, row_number() over () as id
-		from tasks
-	)
-select * from cte_previous_tasks;
+		select title as Task,
+			count as PrevCount
+		from cte_tasks_count
+		order by Task;
+end;
+$$ language plpgsql;
 
-with
-  recursive r(n) as (
-    values(1)
-
-    union all
-
-    select n + 1
-    from r
-    where n < 5
-    ),
-
-  a2(n) as (
-    select 99)
-
-(
-  select n from r
-  union all
-  select n from a2
-)
-order by n desc;
-
--- substring(block_task from '.+?(?=\d{1,2})')
-*/
+-- START PROCEDURE WITH REFCURSOR --
+-- call prcdr_preceding_tasks('ref');
+-- fetch all in "ref";
 
 
 /*
@@ -622,5 +585,55 @@ end;
 $$ language plpgsql;
 
 -- START PROCEDURE WITH REFCURSOR --
-call prcdr_checks_lucky_days('ref', 2);
-fetch all in "ref";
+-- call prcdr_checks_lucky_days('ref', 2);
+-- fetch all in "ref";
+
+
+/*
+ * 18)
+ * Determine the peer with the greatest number of completed tasks
+ */
+create or replace procedure prcdr_peer_with_highest_passed_tasks_number(
+	ref refcursor
+) as
+$$
+begin
+	open ref for
+		select checked as Peer,
+			count(*) as CompletedNumber
+		from v_all_passing_checks1
+		where resume <> 'F'
+		GROUP by checked
+		order by CompletedNumber desc
+		limit 1;
+$$ language plpgsql;
+
+-- START PROCEDURE WITH REFCURSOR --
+-- call prcdr_peer_with_highest_passed_tasks_number('ref');
+-- fetch all in "ref";
+
+
+/*
+ * 19)
+ * Determine the peer with the highest amount of XP
+ */
+create or replace procedure prcdr_peer_with_highest_xp(
+	ref refcursor
+) as
+$$
+begin
+	open ref for
+		select checked as Peer,
+			sum(xpamount) as XP
+		from v_all_passing_checks1 v_apch1
+			join XP on XP."Check" = v_apch1.checks_id
+		where resume <> 'F'
+		group by checked
+		order by XP desc
+		limit 1;
+end;
+$$ language plpgsql;
+
+-- START PROCEDURE WITH REFCURSOR --
+-- call prcdr_peer_with_highest_xp('ref');
+-- fetch all in "ref";
