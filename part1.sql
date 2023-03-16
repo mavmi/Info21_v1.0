@@ -773,6 +773,12 @@ begin
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-01-01', '00:00:00', 1);
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-01-01', '23:59:59', 2);
 
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2023-01-01', '10:10:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2023-01-01', '22:05:59', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Pirate', '2023-01-01', '00:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Pirate', '2023-01-01', '00:59:59', 2);
+
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-01-10', '08:50:52', 1);
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-01-10', '17:04:02', 2);
 
@@ -794,8 +800,11 @@ begin
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-03-07', '00:00:00', 1);
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-03-08', '09:04:16', 2);
 
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-03-08', '08:50:52', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-03-08', '00:00:00', 1);
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-03-08', '17:04:02', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-03-08', '19:50:52', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-03-08', '21:04:02', 2);
 end;
 $$ language plpgsql;
 

@@ -52,16 +52,19 @@ $$ language plpgsql;
  * 3)
  * Retuens list of peers who have not left campus all the 'finding_day'
  */
-create or replace function fnc_hold_day_in_campus_list(finding_day time)
-	returns table(Peer varchar) as
+create or replace function fnc_hold_day_in_campus_list(finding_day date)
+	returns table("Peer" varchar) as
 $$
 begin
 	return query(
-		select tt1.Peer
-		from timetracking tt1
-			right join timetracking tt2 using(Peer)
-		where tt2.state != tt1.state and tt1.state != 2
-			and tt1.time = '00:00:00' and tt2.time = '23:59:59'
+		select peer
+		from(
+			select peer, time, date, (date + time)::timestamp as login,
+				lead((date + time)::timestamp) over (partition by peer order by date, time) as logout
+			from timetracking
+		) as school_time
+		where time = '00:00:00' and (logout - login) >= interval '23:59:59'
+			and date = finding_day
 	);
 end;
 $$ language plpgsql;
@@ -637,3 +640,4 @@ $$ language plpgsql;
 -- START PROCEDURE WITH REFCURSOR --
 -- call prcdr_peer_with_highest_xp('ref');
 -- fetch all in "ref";
+
