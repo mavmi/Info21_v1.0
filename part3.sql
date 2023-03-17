@@ -641,3 +641,46 @@ $$ language plpgsql;
 -- call prcdr_peer_with_highest_xp('ref');
 -- fetch all in "ref";
 
+/*
+ * 20)
+ * Determine the peer who spent the longest amount of time on campus today
+ */
+create or replace procedure prcdr_longest_campus_visit_today(
+	ref refcursor
+) as
+$$
+begin
+	open ref for
+		with cte_current_date_difs as (
+			select peer,
+				(case
+					when date <> current_date
+						then coalesce(logout::time, localtime(0))
+					else
+						(logout::time - time)::time
+					end
+				) as dif
+			from (
+				select *,
+					lead((date + time), 1) over (
+						partition by peer
+						order by id
+					) as logout
+				from timetracking
+					order by 1
+			) as d
+			where (date = current_date
+				or (state <> 2 and logout is null)
+				or logout::date = current_date)
+				and state = 1
+		)
+		select peer
+		from cte_current_date_difs
+		order by dif desc
+		limit 1;
+end;
+$$ language plpgsql;
+
+-- START PROCEDURE WITH REFCURSOR --
+call prcdr_longest_campus_visit_today('ref');
+fetch all in "ref";
