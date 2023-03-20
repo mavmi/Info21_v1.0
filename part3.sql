@@ -667,7 +667,7 @@ begin
 						order by id
 					) as logout
 				from timetracking
-					order by 1
+				order by 1
 			) as d
 			where (date = current_date
 				or (state <> 2 and logout is null)
