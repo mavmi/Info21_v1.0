@@ -641,10 +641,7 @@ $$ language plpgsql;
 -- call prcdr_peer_with_highest_xp('ref');
 -- fetch all in "ref";
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 6d4f28f ([part3] completed ex20)
 /*
  * 20)
  * Determine the peer who spent the longest amount of time on campus today
@@ -686,5 +683,123 @@ end;
 $$ language plpgsql;
 
 -- START PROCEDURE WITH REFCURSOR --
-call prcdr_longest_campus_visit_today('ref');
+-- call prcdr_longest_campus_visit_today('ref');
+-- fetch all in "ref";
+
+
+/*
+ * 21)
+ * Determine the peers that came before the 'before_time'
+ * at least 'N' times during the whole time
+ */
+create or replace procedure prcdr_came_before(
+	ref refcursor,
+	before_time time,
+	N bigint
+) as
+$$
+begin
+	open ref for
+		select distinct peer
+		from (
+			select peer, count(peer) over (partition by peer)
+			from TimeTracking
+			where time < before_time and state = 1
+		) as who_came
+		where count >= N
+		order by peer;
+end;
+$$ language plpgsql;
+
+-- START PROCEDURE WITH REFCURSOR --
+-- call prcdr_came_before('ref', '15:00:00', 3);
+-- fetch all in "ref";
+
+
+/*
+ * 22)
+ * Determine the peers who left the campus more than 'M'
+ * times during the last 'N' days
+ */
+create or replace procedure prcdr_left_during_time(
+	ref refcursor,
+	M bigint,
+	N bigint
+) as
+$$
+begin
+	open ref for
+		select distinct peer
+		from (
+		select peer, count(peer) over (partition by peer)
+		from timetracking
+		where (date between current_date - (N || 'day')::interval
+			and current_date)
+			and state = 2
+		) as who_left
+		where count > M
+		order by peer;
+end;
+$$ language plpgsql;
+
+-- START PROCEDURE WITH REFCURSOR --
+-- call prcdr_left_during_time('ref', 2, 15);
+-- fetch all in "ref";
+
+
+/*
+ * 23)
+ * Determine which peer was the last to come in today
+ */
+create or replace procedure prcdr_who_come_laster(ref refcursor) as
+$$
+begin
+	open ref for
+		select peer
+		from timetracking
+		where date = CURRENT_DATE and state = 1
+		order by time desc
+		limit 1;
+end;
+$$ language plpgsql;
+
+-- START PROCEDURE WITH REFCURSOR --
+-- call prcdr_who_come_laster('ref');
+-- fetch all in "ref";
+
+
+/*
+ * 24)
+ * Determine the peer that left campus yesterday for more than 'N' minutes
+ */
+create or replace procedure prcdr_who_come_back_in_time(
+	ref refcursor,
+	N bigint
+) as
+$$
+begin
+	open ref for
+		select peer
+		from (
+			select
+				peer, date, time, state,
+				lead(date + time, 1) over (
+					partition by peer
+					order by id
+				) as next_coming
+			from timetracking
+		) as comings
+		where date = current_date - interval '1 day'
+			and (extract
+				(epoch
+					from (
+						next_coming - (date + time)
+					)
+				) / 60) > N
+			and state = 2
+		order by peer;
+end;
+$$ language plpgsql;
+
+call prcdr_who_come_back_in_time('ref', 800);
 fetch all in "ref";

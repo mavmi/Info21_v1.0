@@ -6,7 +6,7 @@ begin
 	-- minuse 1 day & 8:03
 	insert into TimeTracking values(
 		fnc_next_id('TimeTracking'),
-		'Sprat_eater',
+		'Strangler',
 		(LOCALTIMESTAMP - interval '1 day 483 minute')::date,
 		(LOCALTIMESTAMP(0) - interval '1 day 483 minute')::time,
 		1
@@ -14,7 +14,7 @@ begin
 	-- minuse 1 day & 8:00
 	insert into TimeTracking values(
 		fnc_next_id('TimeTracking'),
-		'Sprat_eater',
+		'Strangler',
 		(LOCALTIMESTAMP - interval '1 day 300 minute')::date,
 		(LOCALTIMESTAMP(0) - interval '1 day 300 minute')::time,
 		2
@@ -40,7 +40,7 @@ begin
 	-- minuse 1 day & 4:17
 	insert into TimeTracking values(
 		fnc_next_id('TimeTracking'),
-		'Wolf',
+		'Near_Muslim',
 		(LOCALTIMESTAMP - interval '1 day 257 minute')::date,
 		(LOCALTIMESTAMP(0) - interval '1 day 257 minute')::time,
 		1
@@ -48,7 +48,7 @@ begin
 	-- minuse 1 day & 0:30
 	insert into TimeTracking values(
 		fnc_next_id('TimeTracking'),
-		'Wolf',
+		'Near_Muslim',
 		(LOCALTIMESTAMP - interval '1 day 30 minute')::date,
 		(LOCALTIMESTAMP(0) - interval '1 day 30 minute')::time,
 		2
