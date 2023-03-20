@@ -641,7 +641,10 @@ $$ language plpgsql;
 -- call prcdr_peer_with_highest_xp('ref');
 -- fetch all in "ref";
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6d4f28f ([part3] completed ex20)
 /*
  * 20)
  * Determine the peer who spent the longest amount of time on campus today
