@@ -801,5 +801,62 @@ begin
 end;
 $$ language plpgsql;
 
-call prcdr_who_come_back_in_time('ref', 800);
-fetch all in "ref";
+-- START PROCEDURE WITH REFCURSOR --
+-- call prcdr_who_come_back_in_time('ref', 800);
+-- fetch all in "ref";
+
+
+/*
+ * 25)
+ * Determine for each month of year the percentage of early
+ * peers visits (before 12:00) in their birthdays
+ */
+create or replace procedure prcdr_early_in_birthday(ref refcursor) as
+$$
+begin
+	open ref for
+		with
+			cte_birthday_visits as (
+				select timetracking.date,
+					extract(month from timetracking.date) as month,
+					time
+				from timetracking
+					join peers on peers.nickname = timetracking.peer
+						and extract(day from peers.birthday) = extract(day from timetracking.date)
+						and extract(month from peers.birthday) = extract(month from timetracking.date)
+				where timetracking.state = 1
+			),
+			cte_generate_months as (
+				select generate_series(
+					'2000-01-01'::date,
+					'2000-12-01'::date,
+					'1 month'
+				) as timestamp_math
+			)
+		select
+			to_char(timestamp_math, 'Month') as Month,
+			(case
+				when extract(month from timestamp_math) = month
+					then round((early * 100 / total), 0)
+				else
+					0
+				end
+			) as EarlyEntries
+		from (
+			select distinct on (month) month,
+				count(*) over (partition by month) as total
+			from cte_birthday_visits as cte_bv
+		) as total_visits
+			join (
+				select distinct on (month) month,
+					count(*) over (partition by month) as early
+					from cte_birthday_visits as cte_bv
+					where time < '12:00:00'
+			) as early_visits using(month)
+			right join cte_generate_months on extract(month from timestamp_math) = month;
+end;
+$$ language plpgsql;
+
+-- START PROCEDURE WITH REFCURSOR --
+-- call prcdr_early_in_birthday('ref');
+-- fetch all in "ref";
