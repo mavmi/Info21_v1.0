@@ -743,6 +743,17 @@ begin
         return;
     end if;
 
+    /*
+     * Coming on birthday ([+] -> before 12:00):
+     * 1. Near_Muslim -> '1980-12-10'
+     * 2. Strangler -> '2000-12-24' [+]
+     * 3. Wolf -> '1990-02-04' [+]
+     * 4. Sprat_eater -> '1999-02-05' [+]
+     * 5. Gabriel -> '1998-02-12'
+     * 6. Pirate -> '1994-02-27'
+     * 7. Luisi -> '1977-03-07' [+]
+     */
+
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Wolf', '2022-12-01', '11:24:11', 1);
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Wolf', '2022-12-01', '23:42:00', 2);
 
@@ -760,6 +771,9 @@ begin
 
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2022-12-11', '05:41:34', 1);
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2022-12-11', '20:30:47', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2022-12-24', '10:14:22', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2022-12-24', '12:29:17', 2);
 
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2022-12-28', '20:30:47', 1);
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2022-12-29', '00:49:44', 2);
@@ -791,17 +805,29 @@ begin
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2023-02-04', '00:00:00', 1);
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2023-02-05', '00:50:44', 2);
 
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Wolf', '2023-02-04', '03:15:54', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Wolf', '2023-02-04', '11:24:14', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Sprat_eater', '2023-02-05', '11:01:45', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Sprat_eater', '2023-02-05', '19:14:34', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2023-02-12', '21:14:05', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2023-02-13', '00:07:42', 2);
+
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Sprat_eater', '2023-02-16', '13:49:44', 1);
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Sprat_eater', '2023-02-17', '05:17:02', 2);
 
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-02-25', '19:07:45', 1);
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-02-25', '22:14:04', 2);
 
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Pirate', '2023-02-27', '10:08:21', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Pirate', '2023-02-27', '20:05:17', 2);
+
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-03-07', '00:00:00', 1);
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-03-08', '09:04:16', 2);
 
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-03-08', '00:00:00', 1);
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-03-08', '17:04:02', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-03-07', '01:14:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-03-07', '17:04:02', 2);
 
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-03-08', '19:50:52', 1);
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-03-08', '21:04:02', 2);
