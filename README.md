@@ -43,6 +43,8 @@ In the future, Whether a task belongs to a block will be determined by the name 
 
 - [ ] Add utils function which will return next id of coming as argument
 
+- [ ] [recreate..Db.sql] ?Delete? '\c pmaryjo'
+
 
 **To do some inserting to part1's tables for correct testing part3:**
 
