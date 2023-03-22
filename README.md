@@ -92,6 +92,9 @@ In the future, Whether a task belongs to a block will be determined by the name 
 
 ### Just in case for be remembering:
 The **DDL** (Data Definition Language) commands are used to define the database. Example: CREATE, DROP, ALTER, TRUNCATE, COMMENT, RENAME.
+
 The **DML** (Data Manipulation Language) commands deal with the manipulation of data present in the database. Example: SELECT, INSERT, UPDATE, DELETE.
+
 The **DCL** (Data Control Language) commands deal with the permissions, rights and other controls of the database system. Example: GRANT, INVOKE.
+
 The **TCL** (Transaction Control Language) commands deal with the transaction of the database.Example: BEGIN, COMMIT, ROLLBACK.
