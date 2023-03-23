@@ -89,7 +89,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_passed_state_percentage('ref');
 -- fetch all in "ref";
 
@@ -126,7 +126,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_total_points_changes('ref');
 -- fetch all in "ref";
 
@@ -159,7 +159,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_totall_points_from_func('ref');
 -- fetch all in "ref";
 
@@ -187,7 +187,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_frequently_checked_task('ref');
 -- fetch all in "ref";
 
@@ -218,7 +218,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_checking_time_duration('ref');
 -- fetch all in "ref";
 
@@ -252,7 +252,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_passed_task_block('ref', 'A');
 -- fetch all in "ref";
 
@@ -281,7 +281,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_recommended_peer('ref');
 -- fetch all in "ref";
 
@@ -376,7 +376,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_percenge_started_block('ref', 'CPP', 'DO');
 -- fetch all in "ref";
 
@@ -401,7 +401,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_greates_friends_number('ref', 5);
 -- fetch all in "ref";
 
@@ -456,7 +456,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_passed_on_birthday('ref');
 -- fetch all in "ref";
 
@@ -487,7 +487,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_total_peer_xp_amount('ref');
 -- fetch all in "ref";
 
@@ -516,7 +516,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_did_peer_tasks('ref', 'SQL', 'A', 'DO');
 -- fetch all in "ref";
 
@@ -550,7 +550,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_preceding_tasks('ref');
 -- fetch all in "ref";
 
@@ -587,7 +587,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_checks_lucky_days('ref', 2);
 -- fetch all in "ref";
 
@@ -611,7 +611,7 @@ begin
 		limit 1;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_peer_with_highest_passed_tasks_number('ref');
 -- fetch all in "ref";
 
@@ -637,7 +637,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_peer_with_highest_xp('ref');
 -- fetch all in "ref";
 
@@ -682,7 +682,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_longest_campus_visit_today('ref');
 -- fetch all in "ref";
 
@@ -711,7 +711,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_came_before('ref', '15:00:00', 3);
 -- fetch all in "ref";
 
@@ -742,7 +742,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_left_during_time('ref', 2, 15);
 -- fetch all in "ref";
 
@@ -763,7 +763,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_who_come_laster('ref');
 -- fetch all in "ref";
 
@@ -801,7 +801,7 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_who_come_back_in_time('ref', 800);
 -- fetch all in "ref";
 
@@ -857,6 +857,6 @@ begin
 end;
 $$ language plpgsql;
 
--- START PROCEDURE WITH REFCURSOR --
+-- CALL PROCEDURE WITH REFCURSOR --
 -- call prcdr_early_in_birthday('ref');
 -- fetch all in "ref";
