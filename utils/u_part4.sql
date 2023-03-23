@@ -9,6 +9,9 @@
  *
  * Record type:
  * https://www.postgresqltutorial.com/postgresql-plpgsql/plpgsql-record-types/
+ *
+ * About regular expresions in postgresql
+ * https://hevodata.com/learn/postgresql-regex/
  */
 
 
