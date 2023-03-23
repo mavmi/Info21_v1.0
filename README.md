@@ -64,19 +64,19 @@ In the future, Whether a task belongs to a block will be determined by the name 
 
 
 **Create db for bounse part:**
-- [ ] Some tables with names:
+- [x] Some tables with names:
 	- 'TableName'
 	- the names are starting with 'TableName'
 	- 'TableName' in the center/end of name
-- [ ] Some scalar functions:
+- [x] Some scalar functions:
 	- with paramethers
 	- without paramethers
 	- with one substring in name
 	- without same substring in name
-- [ ] Some triggers:
+- [x] Some triggers:
 	- DDL
 	- DML
-- [ ] Some procedure:
+- [x] Some procedure:
 	- with one substring in name
 	- without same substring in name
 
