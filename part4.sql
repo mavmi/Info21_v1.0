@@ -51,14 +51,17 @@ $$ language plpgsql;
  * and number of found funcs (just functions which have params)
  */
 create or replace procedure prcdr_funcs_with_arguments(
-	funcs inout text,
-	numb inout int
+	funcs out text,
+	numb out int
 ) as
 $$
 declare
 	line record;
 begin
-	for line in select (
+	funcs := '';
+    numb := 0;
+	for line in
+		select (
 				p.proname || ' (' || pg_get_function_arguments(p.oid) || ')'
 			) as functions_list
 		from pg_catalog.pg_namespace n
@@ -66,7 +69,7 @@ begin
 		where p.prokind = 'f'
 			and n.nspname = 'public'
 			and (pg_get_function_arguments(p.oid) = '') is not true
-		loop
+	loop
 		funcs := (funcs || line.functions_list || E'\n');
 		numb := numb + 1;
 	end loop;
@@ -75,3 +78,30 @@ $$ language plpgsql;
 
 -- CALL PROCEDURE --
 -- call prcdr_funcs_with_arguments('', 0);
+
+
+/*
+ * 3)
+ * Destroy all SQL DML triggers in the current database and
+ * output parameter returns the number of destroyed triggers
+ */
+create or replace procedure prcdr_destroy_DML_triggers(num out int) AS
+$$
+declare
+	i record;
+begin
+	num := 0;
+	for i in
+		select *
+		from information_schema.triggers
+		where event_manipulation in ('DELETE', 'UPDATE', 'INSERT')
+	loop
+		execute 'drop trigger ' || i.trigger_name || ' on '
+			|| i.event_object_table || ' cascade';
+		num := num + 1;
+	end loop;
+end;
+$$ language plpgsql;
+
+-- CALL PROCEDURE --
+-- call prcdr_destroy_DML_triggers(0);
