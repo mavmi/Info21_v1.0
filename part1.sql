@@ -30,13 +30,13 @@ begin
         return;
     end if;
 
-    insert into Peers values('Wolf', '1990-03-01');
-    insert into Peers values('Sprat_eater', '1999-02-02');
-    insert into Peers values('Near_Muslim', '1980-11-03');
-    insert into Peers values('Pirate', '1994-04-04');
-    insert into Peers values('Strangler', '2000-05-05');
-    insert into Peers values('Gabriel', '1998-09-19');
-    insert into Peers values('Luisi', '1977-06-20');
+    insert into Peers values('Wolf', '1990-02-04');
+    insert into Peers values('Sprat_eater', '1999-02-05');
+    insert into Peers values('Near_Muslim', '1980-12-10');
+    insert into Peers values('Pirate', '1994-02-27');
+    insert into Peers values('Strangler', '2000-12-24');
+    insert into Peers values('Gabriel', '1998-02-12');
+    insert into Peers values('Luisi', '1977-03-07');
 end;
 $$ language plpgsql;
 
@@ -100,17 +100,28 @@ begin
     /*
      * Tasks pull:
      * 1. 'Wolf'        -> CPP1-CPP4, CPP5(2)
-     * 2. 'Sprat_eater' -> DO1(2), DO2, CPP1, CPP2(2), CPP3
-     * 3. 'Near_Muslim' -> DO1-DO6, CPP1
+     * 2. 'Sprat_eater' -> DO1(2), DO2(2), CPP1, CPP2(2), CPP3
+     * 3. 'Near_Muslim' -> DO1-DO6, CPP1, SQL1
      * 4. 'Pirate'      -> CPP1-CPP5
      * 5. 'Strangler'   -> A1-A8, SQL1
      * 6. 'Gabriel'     -> A1-A7, A8(2), SQL1-SQL2
      * 7. 'Luisi'       -> SQL1-SQL2, SQL3(3)
      */
 
+     /*
+      * Successfull passeds on birthday [id, module, state]:
+      * 1. 'Wolf'        -> [27, CPP1, Success]
+      * 2. 'Sprat_eater' -> [28, CPP2, Failure]
+      * 3. 'Near_Muslim' -> [5, DO1, Success]
+      * 4. 'Pirate'      -> [didnt passed to birthday]
+      * 5. 'Strangler'   -> [12, A4, Success]
+      * 6. 'Gabriel'     -> [37, A8, Failure]
+      * 7. 'Luisi'       -> [50, SQL3, Success]
+      */
+
     insert into Checks values(1, 'Near_Muslim', 'DO1', '2022-12-01');
     insert into Checks values(2, 'Strangler', 'A1', '2022-12-01');
-    insert into Checks values(3, 'Gabriel', 'A1', '202-12-01');
+    insert into Checks values(3, 'Gabriel', 'A1', '2022-12-01');
 
     insert into Checks values(4, 'Gabriel', 'A2', '2022-12-03');
 
@@ -122,7 +133,7 @@ begin
     insert into Checks values(9, 'Strangler', 'A3', '2022-12-15');
     insert into Checks values(10, 'Gabriel', 'A4', '2022-12-15');
 
-    insert into Checks values(11, 'Near_Muslim', 'DO4', '2023-12-24');
+    insert into Checks values(11, 'Near_Muslim', 'DO4', '2022-12-24');
     insert into Checks values(12, 'Strangler', 'A4', '2022-12-24');
     insert into Checks values(13, 'Gabriel', 'A5', '2022-12-24');
 
@@ -176,6 +187,11 @@ begin
     insert into Checks values(49, 'Luisi', 'SQL3', '2023-03-06');
 
     insert into Checks values(50, 'Luisi', 'SQL3', '2023-03-07');
+    insert into Checks values(51, 'Sprat_eater', 'DO2', '2023-03-07'); --Repassing
+    insert into Checks values(52, 'Near_Muslim', 'SQL1', '2023-03-07');
+    insert into Checks values(53, 'Wolf', 'CPP5', '2023-03-07'); --Repassing
+
+    insert into Checks values(54, 'Sprat_eater', 'DO1', '2023-03-08'); --Repassing
 end;
 $$ language plpgsql;
 
@@ -343,6 +359,18 @@ begin
 
     insert into P2P values(fnc_next_id('P2P'), 50, 'Gabriel', 'Start', '14:16:07');
     insert into P2P values(fnc_next_id('P2P'), 50, 'Gabriel', 'Success', '15:07:55');
+
+    insert into P2P values(fnc_next_id('P2P'), 51, 'Pirate', 'Start', '21:16:07');
+    insert into P2P values(fnc_next_id('P2P'), 51, 'Pirate', 'Success', '21:40:55');
+
+    insert into P2P values(fnc_next_id('P2P'), 52, 'Pirate', 'Start', '23:00:05');
+    insert into P2P values(fnc_next_id('P2P'), 52, 'Pirate', 'Success', '23:30:55');
+
+    insert into P2P values(fnc_next_id('P2P'), 53, 'Luisi', 'Start', '22:00:05');
+    insert into P2P values(fnc_next_id('P2P'), 53, 'Luisi', 'Success', '22:30:55');
+
+    insert into P2P values(fnc_next_id('P2P'), 54, 'Strangler', 'Start', '20:00:05');
+    insert into P2P values(fnc_next_id('P2P'), 54, 'Strangler', 'Success', '21:30:55');
 end;
 $$ language plpgsql;
 
@@ -474,6 +502,15 @@ begin
 
     insert into Verter values(fnc_next_id('Verter'), 45, 'Start', '13:14:15');
     insert into Verter values(fnc_next_id('Verter'), 45, 'Success', '13:15:15');
+
+    insert into Verter values(fnc_next_id('Verter'), 51, 'Start', '21:41:00');
+    insert into Verter values(fnc_next_id('Verter'), 51, 'Success', '21:41:30');
+
+    insert into Verter values(fnc_next_id('Verter'), 53, 'Start', '21:41:00');
+    insert into Verter values(fnc_next_id('Verter'), 53, 'Success', '21:41:30');
+
+    insert into Verter values(fnc_next_id('Verter'), 54, 'Start', '21:41:00');
+    insert into Verter values(fnc_next_id('Verter'), 54, 'Success', '21:41:30');
 end;
 $$ language plpgsql;
 
@@ -543,6 +580,10 @@ begin
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Near_Muslim', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Strangler', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Gabriel', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Sprat_eater', 'Pirate', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Pirate', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Wolf', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Sprat_eater', 1);
 end
 $$ language plpgsql;
 
@@ -567,8 +608,8 @@ begin
         'Wolf' -> ['Gabriel'/'Luisi'/'Pirate'/'Sprat_eater'/'Strangler'],
         'Sprat_eater' -> ['Luisi'/'Near_Muslim'/'Wolf']
         'Near_Muslim' -> ['Gabriel'/'Luisi'/'Pirate'/'Sprat_eater']
-        'Pirate' -> ['Near_Muslim'/'Strangler'/'Wolf'], 
-        'Strangler' -> ['Pirate'/'Wolf'], 
+        'Pirate' -> ['Near_Muslim'/'Strangler'/'Wolf'],
+        'Strangler' -> ['Pirate'/'Wolf'],
         'Gabriel' -> ['Luisi'/'Near_Muslim'/'Wolf'],
         'Luisi' -> ['Gabriel'/'Near_Muslim'/'Sprat_eater'/'Wolf']
     */
@@ -678,6 +719,10 @@ begin
     insert into XP values(fnc_next_id('XP'), 46, 500);
     insert into XP values(fnc_next_id('XP'), 47, 500);
     insert into XP values(fnc_next_id('XP'), 50, 580);
+    insert into XP values(fnc_next_id('XP'), 51, 250);
+    insert into XP values(fnc_next_id('XP'), 52, 1450);
+    insert into XP values(fnc_next_id('XP'), 53, 400);
+    insert into XP values(fnc_next_id('XP'), 54, 300);
 end;
 $$ language plpgsql;
 
@@ -698,14 +743,94 @@ begin
         return;
     end if;
 
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Wolf', '2023-02-01', '11:24:11', 1);
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Wolf', '2023-02-01', '23:42:00', 2);
+    /*
+     * Coming on birthday ([+] -> before 12:00):
+     * 1. Near_Muslim -> '1980-12-10'
+     * 2. Strangler -> '2000-12-24' [+]
+     * 3. Wolf -> '1990-02-04' [+]
+     * 4. Sprat_eater -> '1999-02-05' [+]
+     * 5. Gabriel -> '1998-02-12'
+     * 6. Pirate -> '1994-02-27'
+     * 7. Luisi -> '1977-03-07' [+]
+     */
 
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2023-02-03', '09:05:54', 1);
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2023-02-03', '23:42:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Wolf', '2022-12-01', '11:24:11', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Wolf', '2022-12-01', '23:42:00', 2);
 
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Sprat_eater', '2023-02-10', '13:44:01', 1);
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Sprat_eater', '2023-02-10', '23:42:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2022-12-01', '09:05:54', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2022-12-01', '23:42:00', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Sprat_eater', '2022-12-05', '13:44:01', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Sprat_eater', '2022-12-05', '23:42:00', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Pirate', '2022-12-07', '00:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Pirate', '2022-12-07', '23:59:59', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2022-12-10', '23:59:59', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2022-12-11', '02:42:59', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2022-12-11', '05:41:34', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2022-12-11', '20:30:47', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2022-12-24', '10:14:22', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2022-12-24', '12:29:17', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2022-12-28', '20:30:47', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2022-12-29', '00:49:44', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2022-12-30', '13:49:44', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2022-12-31', '05:17:02', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Pirate', '2022-12-30', '19:07:45', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Pirate', '2022-12-31', '03:17:55', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-01-01', '00:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-01-01', '23:59:59', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2023-01-01', '10:10:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2023-01-01', '22:05:59', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Pirate', '2023-01-01', '00:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Pirate', '2023-01-01', '00:59:59', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-01-10', '08:50:52', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-01-10', '17:04:02', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2023-01-20', '15:59:59', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Near_Muslim', '2023-01-20', '23:59:52', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-01-30', '09:41:34', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-01-30', '20:00:47', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2023-02-04', '00:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2023-02-05', '00:50:44', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Wolf', '2023-02-04', '03:15:54', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Wolf', '2023-02-04', '11:24:14', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Sprat_eater', '2023-02-05', '11:01:45', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Sprat_eater', '2023-02-05', '19:14:34', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2023-02-12', '21:14:05', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Gabriel', '2023-02-13', '00:07:42', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Sprat_eater', '2023-02-16', '13:49:44', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Sprat_eater', '2023-02-17', '05:17:02', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-02-25', '19:07:45', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-02-25', '22:14:04', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Pirate', '2023-02-27', '10:08:21', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Pirate', '2023-02-27', '20:05:17', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-03-07', '00:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-03-08', '09:04:16', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-03-07', '01:14:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Luisi', '2023-03-07', '17:04:02', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-03-08', '19:50:52', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Strangler', '2023-03-08', '21:04:02', 2);
 end;
 $$ language plpgsql;
 
@@ -884,7 +1009,7 @@ begin
                 where
                     Checks.Peer = new.Peer and
                     Checks.Task = ParentTask and
-                    P2P.State = 'Success' and 
+                    P2P.State = 'Success' and
                         (Verter.State = 'Success' or Verter.State is null)
             ) = 0 then
         return null;
