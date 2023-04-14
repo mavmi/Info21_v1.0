@@ -1059,7 +1059,6 @@ end;
 $$ language plpgsql;
 
 
-
 /*** Triggers ***/
 create trigger trg_verter_successful_checks
 before insert on Verter
