@@ -1,5 +1,12 @@
 1,Wolf,Sprat_eater
-2,Sprat_eater,Near_Muslim
-3,Near_Muslim,Pirate
-4,Pirate,Strangler
-5,Strangler,Wolf
+2,Wolf,Luisi
+3,Wolf,Gabriel
+4,Sprat_eater,Near_Muslim
+5,Sprat_eater,Luisi
+6,Near_Muslim,Gabriel
+7,Near_Muslim,Pirate
+8,Pirate,Wolf
+9,Pirate,Strangler
+10,Strangler,Wolf
+11,Luisi,Near_Muslim
+12,Gabriel,Luisi

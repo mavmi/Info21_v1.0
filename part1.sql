@@ -858,8 +858,10 @@ $create_tables$;
 /*** Utils ***/
 create or replace function get_cvs_dir() returns varchar as
 $$
+declare
+    username varchar := (select current_user);
 begin
-    return '/Users/msalena/Desktop/00SQL/cvs/';
+    return concat('/Users/', username, '/Desktop/Info21_v1.0/cvs/');
 end
 $$ language plpgsql;
 create or replace procedure save_to_file(separator char, table_name varchar, file_name varchar) as
@@ -877,7 +879,7 @@ $$ language plpgsql;
 
 
 /*** Trigger functions ***/
--- Check if current insertion has successful P2P --
+-- Check if current insertion's `Check` field has successful P2P --
 create or replace function trg_fnc_successful_checks() returns trigger as
 $$
 begin
@@ -898,11 +900,9 @@ begin
 end;
 $$ language plpgsql;
 
--- Check `CheckingPeer` on start and finish --
+-- Check if `CheckingPeer's` are equal for start and finish states of one `Check` record --
 create or replace function trg_fnc_p2p_insert_1() returns trigger as
 $$
-declare
-
 begin
     if (new.State = 'Start') then
         return new;
@@ -1019,6 +1019,46 @@ begin
 end;
 $$ language plpgsql;
 
+-- To avoid duplicates of friends' pairs and lonely friendship --
+create or replace function trg_fnc_friends_insert() returns trigger as
+$$
+begin
+    if (new.Peer1 = new.Peer2) then
+        return null;
+    elseif (
+            select count(*) from Friends
+            where Peer1 = new.Peer1 and Peer2 = new.Peer2 or
+                  Peer1 = new.Peer2 and Peer2 = new.Peer1
+        ) != 0 then
+        return null;
+    else
+        return new;
+    end if;
+end;
+$$ language plpgsql;
+
+-- Check if new record is not in table --
+-- Check if `Peer` and `RecommendedPeer` are not equal --
+create or replace function trg_fnc_recommendations_insert() returns trigger as
+$$
+begin
+    if (new.Peer = new.RecommendedPeer) then
+        return null;
+    elseif (
+        (
+            select count(*)
+            from Recommendations
+            where Peer = new.Peer and RecommendedPeer = new.RecommendedPeer
+        ) != 0
+    ) then
+        return null;
+    else
+        return new;
+    end if;
+end;
+$$ language plpgsql;
+
+
 
 /*** Triggers ***/
 create trigger trg_verter_successful_checks
@@ -1056,6 +1096,15 @@ before insert on Checks
 for each row
 execute procedure trg_fnc_checks_insert();
 
+create trigger trg_friends_insert
+before insert on Friends
+for each row
+execute procedure trg_fnc_friends_insert();
+
+create trigger trg_recommendations_insert
+before insert on Recommendations
+for each row
+execute procedure trg_fnc_recommendations_insert();
 
 /*** IO procedures ***/
 -- Peers
