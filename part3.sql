@@ -609,6 +609,7 @@ begin
 		GROUP by checked
 		order by CompletedNumber desc
 		limit 1;
+end;
 $$ language plpgsql;
 
 -- CALL PROCEDURE WITH REFCURSOR --

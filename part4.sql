@@ -7,12 +7,12 @@
 -------------------------------------
 -- CREATING OR REFRESHING DATABASE --
 -------------------------------------
-\i :recreating_db_path
+-- \i :recreating_db_path
 
 ----------------------
 -- FILLING DATABASE --
 ----------------------
-\i :filling_db_path
+-- \i :filling_db_path
 
 
 ----------------
