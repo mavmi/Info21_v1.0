@@ -117,12 +117,12 @@ $$
 begin
 	if (
 		(
-			select (new.XPAmount <= Tasks.MaxXP)
+			select count(*) filter (where new.XPAmount <= Tasks.MaxXP)
 			from Checks
 				join v_all_passing_checks as v_apch on v_apch.Checks_ID = Checks.ID
 				join Tasks on Tasks.Title = Checks.Task
 			where v_apch.resume_s is not null
-		)
+		) > 0
 	) then
 		return new;
 	else return null;

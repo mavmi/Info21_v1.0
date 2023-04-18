@@ -119,79 +119,79 @@ begin
       * 7. 'Luisi'       -> [50, SQL3, Success]
       */
 
-    insert into Checks values(1, 'Near_Muslim', 'DO1', '2022-12-01');
-    insert into Checks values(2, 'Strangler', 'A1', '2022-12-01');
-    insert into Checks values(3, 'Gabriel', 'A1', '2022-12-01');
+    insert into Checks values(fnc_next_id('Checks'), 'Near_Muslim', 'DO1', '2022-12-01');
+    insert into Checks values(fnc_next_id('Checks'), 'Strangler', 'A1', '2022-12-01');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'A1', '2022-12-01');
 
-    insert into Checks values(4, 'Gabriel', 'A2', '2022-12-03');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'A2', '2022-12-03');
 
-    insert into Checks values(5, 'Near_Muslim', 'DO2', '2022-12-10');
-    insert into Checks values(6, 'Strangler', 'A2', '2022-12-10');
-    insert into Checks values(7, 'Gabriel', 'A3', '2022-12-10');
+    insert into Checks values(fnc_next_id('Checks'), 'Near_Muslim', 'DO2', '2022-12-10');
+    insert into Checks values(fnc_next_id('Checks'), 'Strangler', 'A2', '2022-12-10');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'A3', '2022-12-10');
 
-    insert into Checks values(8, 'Near_Muslim', 'DO3', '2022-12-15');
-    insert into Checks values(9, 'Strangler', 'A3', '2022-12-15');
-    insert into Checks values(10, 'Gabriel', 'A4', '2022-12-15');
+    insert into Checks values(fnc_next_id('Checks'), 'Near_Muslim', 'DO3', '2022-12-15');
+    insert into Checks values(fnc_next_id('Checks'), 'Strangler', 'A3', '2022-12-15');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'A4', '2022-12-15');
 
-    insert into Checks values(11, 'Near_Muslim', 'DO4', '2022-12-24');
-    insert into Checks values(12, 'Strangler', 'A4', '2022-12-24');
-    insert into Checks values(13, 'Gabriel', 'A5', '2022-12-24');
+    insert into Checks values(fnc_next_id('Checks'), 'Near_Muslim', 'DO4', '2022-12-24');
+    insert into Checks values(fnc_next_id('Checks'), 'Strangler', 'A4', '2022-12-24');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'A5', '2022-12-24');
 
-    insert into Checks values(14, 'Near_Muslim', 'DO5', '2023-01-03');
-    insert into Checks values(15, 'Sprat_eater', 'DO1', '2023-01-03');
-    insert into Checks values(16, 'Strangler', 'A5', '2023-01-03');
+    insert into Checks values(fnc_next_id('Checks'), 'Near_Muslim', 'DO5', '2023-01-03');
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'DO1', '2023-01-03');
+    insert into Checks values(fnc_next_id('Checks'), 'Strangler', 'A5', '2023-01-03');
 
-    insert into Checks values(17, 'Sprat_eater', 'DO1', '2023-01-05');
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'DO1', '2023-01-05');
 
-    insert into Checks values(18, 'Sprat_eater', 'DO2', '2023-01-15');
-    insert into Checks values(19, 'Near_Muslim', 'DO6', '2023-01-15');
-    insert into Checks values(20, 'Strangler', 'A6', '2023-01-15');
-    insert into Checks values(21, 'Gabriel', 'A6', '2023-01-15');
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'DO2', '2023-01-15');
+    insert into Checks values(fnc_next_id('Checks'), 'Near_Muslim', 'DO6', '2023-01-15');
+    insert into Checks values(fnc_next_id('Checks'), 'Strangler', 'A6', '2023-01-15');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'A6', '2023-01-15');
 
-    insert into Checks values(22, 'Near_Muslim', 'CPP1', '2023-02-01');
-    insert into Checks values(23, 'Sprat_eater', 'CPP1', '2023-02-01');
-    insert into Checks values(24, 'Strangler', 'A7', '2023-02-01');
-    insert into Checks values(25, 'Gabriel', 'A7', '2023-02-01');
+    insert into Checks values(fnc_next_id('Checks'), 'Near_Muslim', 'CPP1', '2023-02-01');
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'CPP1', '2023-02-01');
+    insert into Checks values(fnc_next_id('Checks'), 'Strangler', 'A7', '2023-02-01');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'A7', '2023-02-01');
 
-    insert into Checks values(26, 'Pirate', 'CPP1', '2023-02-04');
-    insert into Checks values(27, 'Wolf', 'CPP1', '2023-02-04');
+    insert into Checks values(fnc_next_id('Checks'), 'Pirate', 'CPP1', '2023-02-04');
+    insert into Checks values(fnc_next_id('Checks'), 'Wolf', 'CPP1', '2023-02-04');
 
-    insert into Checks values(28, 'Sprat_eater', 'CPP2', '2023-02-05');
-    insert into Checks values(29, 'Pirate', 'CPP2', '2023-02-05');
-    insert into Checks values(30, 'Wolf', 'CPP2', '2023-02-05');
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'CPP2', '2023-02-05');
+    insert into Checks values(fnc_next_id('Checks'), 'Pirate', 'CPP2', '2023-02-05');
+    insert into Checks values(fnc_next_id('Checks'), 'Wolf', 'CPP2', '2023-02-05');
 
-    insert into Checks values(31, 'Sprat_eater', 'CPP2', '2023-02-09');
-    insert into Checks values(32, 'Pirate', 'CPP3', '2023-02-09');
-    insert into Checks values(33, 'Wolf', 'CPP3', '2023-02-09');
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'CPP2', '2023-02-09');
+    insert into Checks values(fnc_next_id('Checks'), 'Pirate', 'CPP3', '2023-02-09');
+    insert into Checks values(fnc_next_id('Checks'), 'Wolf', 'CPP3', '2023-02-09');
 
-    insert into Checks values(34, 'Sprat_eater', 'CPP3', '2023-02-12');
-    insert into Checks values(35, 'Strangler', 'A8', '2023-02-12');
-    insert into Checks values(36, 'Pirate', 'CPP4', '2023-02-12');
-    insert into Checks values(37, 'Gabriel', 'A8', '2023-02-12');
-    insert into Checks values(38, 'Wolf', 'CPP4', '2023-02-12');
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'CPP3', '2023-02-12');
+    insert into Checks values(fnc_next_id('Checks'), 'Strangler', 'A8', '2023-02-12');
+    insert into Checks values(fnc_next_id('Checks'), 'Pirate', 'CPP4', '2023-02-12');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'A8', '2023-02-12');
+    insert into Checks values(fnc_next_id('Checks'), 'Wolf', 'CPP4', '2023-02-12');
 
-    insert into Checks values(39, 'Wolf', 'CPP5', '2023-02-25');
+    insert into Checks values(fnc_next_id('Checks'), 'Wolf', 'CPP5', '2023-02-25');
 
-    insert into Checks values(40, 'Strangler', 'SQL1', '2023-02-27');
-    insert into Checks values(41, 'Gabriel', 'A8', '2023-02-27');
-    insert into Checks values(42, 'Pirate', 'CPP5', '2023-02-27');
-    insert into Checks values(43, 'Luisi', 'SQL1', '2023-02-27');
-    insert into Checks values(44, 'Gabriel', 'SQL1', '2023-02-27');
-    insert into Checks values(45, 'Wolf', 'CPP5', '2023-02-27');
+    insert into Checks values(fnc_next_id('Checks'), 'Strangler', 'SQL1', '2023-02-27');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'A8', '2023-02-27');
+    insert into Checks values(fnc_next_id('Checks'), 'Pirate', 'CPP5', '2023-02-27');
+    insert into Checks values(fnc_next_id('Checks'), 'Luisi', 'SQL1', '2023-02-27');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'SQL1', '2023-02-27');
+    insert into Checks values(fnc_next_id('Checks'), 'Wolf', 'CPP5', '2023-02-27');
 
-    insert into Checks values(46, 'Gabriel', 'SQL2', '2023-03-01');
-    insert into Checks values(47, 'Luisi', 'SQL2', '2023-03-01');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'SQL2', '2023-03-01');
+    insert into Checks values(fnc_next_id('Checks'), 'Luisi', 'SQL2', '2023-03-01');
 
-    insert into Checks values(48, 'Luisi', 'SQL3', '2023-03-05');
+    insert into Checks values(fnc_next_id('Checks'), 'Luisi', 'SQL3', '2023-03-05');
 
-    insert into Checks values(49, 'Luisi', 'SQL3', '2023-03-06');
+    insert into Checks values(fnc_next_id('Checks'), 'Luisi', 'SQL3', '2023-03-06');
 
-    insert into Checks values(50, 'Luisi', 'SQL3', '2023-03-07');
-    insert into Checks values(51, 'Sprat_eater', 'DO2', '2023-03-07'); --Repassing
-    insert into Checks values(52, 'Near_Muslim', 'SQL1', '2023-03-07');
-    insert into Checks values(53, 'Wolf', 'CPP5', '2023-03-07'); --Repassing
+    insert into Checks values(fnc_next_id('Checks'), 'Luisi', 'SQL3', '2023-03-07');
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'DO2', '2023-03-07'); --Repassing
+    insert into Checks values(fnc_next_id('Checks'), 'Near_Muslim', 'SQL1', '2023-03-07');
+    insert into Checks values(fnc_next_id('Checks'), 'Wolf', 'CPP5', '2023-03-07'); --Repassing
 
-    insert into Checks values(54, 'Sprat_eater', 'DO1', '2023-03-08'); --Repassing
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'DO1', '2023-03-08'); --Repassing
 end;
 $$ language plpgsql;
 
@@ -886,11 +886,34 @@ begin
     if (coalesce((
             select "Check"
             from P2P
-            where P2P."Check" = new."Check" and P2P.State = 'Success'
-            intersect
-            select ID
-            from Checks
-            where Checks.ID = new."Check"
+                left join Checks on
+                    P2P."Check" = Checks.ID
+            where new."Check" = P2P."Check" and P2P.State = 'Success' and
+                  new."Check" = Checks.ID
+        )::int, 0) != 0
+    ) then
+        return new;
+    else
+        return null;
+    end if;
+end;
+$$ language plpgsql;
+
+-- Check if current insertion's `Check` field has successful P2P and Verter --
+create or replace function trg_fnc_successful_checks_and_verter() returns trigger as
+$$
+begin
+    if (coalesce((
+            select P2P."Check"
+            from P2P
+                join Checks on
+                    P2P."Check" = Checks.ID
+                join Verter on
+                    P2P."Check" = Verter."Check"
+            where new."Check" = P2P."Check" and
+                  P2P.State = 'Success' and
+                  (Verter.State = 'Success' or Verter."Check" is null) and
+                  new."Check" = Checks.ID
         )::int, 0) != 0
     ) then
         return new;
@@ -956,8 +979,8 @@ begin
     update TransferredPoints set PointsAmount = PointsAmount + 1
     where TransferredPoints.CheckingPeer = new.CheckingPeer and
         TransferredPoints.CheckedPeer = new.CheckedPeer;
-    get diagnostics n = row_count;
 
+    get diagnostics n = row_count;
     if (n != 0) then
         return null;
     else
@@ -1004,8 +1027,8 @@ begin
                 select
                     count(*)
                 from P2P
-                    join Checks on P2P."Check" = Checks.ID
-                    join Verter on Verter."Check" = Checks.ID
+                    full join Checks on P2P."Check" = Checks.ID
+                    full join Verter on Verter."Check" = Checks.ID
                 where
                     Checks.Peer = new.Peer and
                     Checks.Task = ParentTask and
@@ -1068,7 +1091,7 @@ execute procedure trg_fnc_successful_checks();
 create trigger trg_xp_successful_checks
 before insert on XP
 for each row
-execute procedure trg_fnc_successful_checks();
+execute procedure trg_fnc_successful_checks_and_verter();
 
 create trigger trg_p2p_insert_1
 before insert on P2P
