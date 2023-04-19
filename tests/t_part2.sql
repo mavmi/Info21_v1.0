@@ -1,6 +1,6 @@
---------------------------
---- test prcdr_fnc_p2p ---
---------------------------
+---------------------
+--- prcdr_fnc_p2p ---
+---------------------
 begin;
 do $$
 declare
@@ -14,6 +14,8 @@ declare
     checked_peer varchar = 'username1';
     checking_peer varchar = 'username2';
 begin
+    call fnc_print('test prcdr_fnc_p2p');
+
     insert into Peers values(checked_peer, '2000-01-01');
     get diagnostics rows_count = row_count;
     assert (rows_count = 1);
@@ -57,6 +59,76 @@ begin
     assert(p2p_line.checkingpeer = checking_peer);
     assert(p2p_line.state = 'Success');
     assert(p2p_line.time = '13:13:13');
+
+    call fnc_print('ok');
+end;
+$$ language plpgsql;
+rollback;
+
+
+----------------------
+-- prcdr_fnc_verter --
+----------------------
+begin;
+do $$
+declare
+    count1 int;
+    count2 int;
+    rows_count int;
+    peer1 varchar = 'username1';
+    peer2 varchar = 'username2';
+    peer1_check bigint;
+    peer2_check bigint;
+    verter_row Verter%rowtype;
+begin
+    call fnc_print('test prcdr_fnc_verter');
+
+    insert into Peers values(peer1, '2000-01-01');
+    get diagnostics rows_count = row_count;
+    assert (rows_count = 1);
+
+    insert into Peers values(peer2, '2000-01-01');
+    get diagnostics rows_count = row_count;
+    assert (rows_count = 1);
+
+    peer1_check = fnc_next_id('Checks');
+    insert into Checks values(peer1_check, peer1, 'CPP1', '2024-01-01');
+    get diagnostics rows_count = row_count;
+    assert (rows_count = 1);
+
+    peer2_check = fnc_next_id('Checks');
+    insert into Checks values(peer2_check, peer2, 'CPP1', '2024-01-01');
+    get diagnostics rows_count = row_count;
+    assert (rows_count = 1);
+
+    insert into P2P values(fnc_next_id('P2P'), peer1_check, peer2, 'Start', '12:12:12');
+    get diagnostics rows_count = row_count;
+    assert (rows_count = 1);
+
+    insert into P2P values(fnc_next_id('P2P'), peer1_check, peer2, 'Success', '13:13:13');
+    get diagnostics rows_count = row_count;
+    assert (rows_count = 1);
+
+    count1 = (select count(*) from Verter);
+    call prcdr_fnc_verter(peer1, 'CPP1', 'Failure', '14:14:14');
+    count2 = (select count(*) from Verter);
+    assert (count1 + 1 = count2);
+
+    select * into verter_row from Verter order by ID desc limit 1;
+    assert(verter_row."Check" = peer1_check);
+    assert(verter_row.state = 'Failure');
+    assert(verter_row.time = '14:14:14');
+
+    insert into P2P values(fnc_next_id('P2P'), peer2_check, peer1, 'Start', '15:15:15');
+    get diagnostics rows_count = row_count;
+    assert (rows_count = 1);
+
+    count1 = (select count(*) from Verter);
+    call prcdr_fnc_verter(peer2, 'CPP1', 'Failure', '16:16:16');
+    count2 = (select count(*) from Verter);
+    assert (count1 = count2);
+
+    call fnc_print('ok');
 end;
 $$ language plpgsql;
 rollback;
