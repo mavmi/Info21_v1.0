@@ -114,19 +114,29 @@ execute procedure trg_fnc_p2p_insert_transferred_poins();
  */
 create or replace function trg_fnc_xp_check_correct_insert() returns trigger as
 $$
+declare
+    max_xp int;
 begin
-	if (
-		(
-			select count(*) filter (where new.XPAmount <= Tasks.MaxXP)
-			from Checks
-				join v_all_passing_checks as v_apch on v_apch.Checks_ID = Checks.ID
-				join Tasks on Tasks.Title = Checks.Task
-			where v_apch.resume_s is not null
-		) > 0
-	) then
-		return new;
-	else return null;
-	end if;
+    with tmp as (
+        select
+            Tasks.MaxXP as max_xp
+        from Checks
+            full join P2P on Checks.ID = P2P."Check"
+            full join Verter on Checks.ID = Verter."Check"
+            full join Tasks on Checks.Task = Tasks.Title
+        where Checks.ID = new."Check" and
+              P2P.State = 'Success' and
+              (Verter.State = 'Success' or Verter.State is null)
+    )
+
+    select tmp.max_xp into max_xp from tmp;
+    if (max_xp is null) then
+        return null;
+    elseif (new.XPAmount > max_xp) then
+        return null;
+    else
+        return new;
+    end if;
 end;
 $$ language plpgsql;
 
