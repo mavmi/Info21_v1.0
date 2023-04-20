@@ -83,8 +83,19 @@ begin
 				count(resume_s) as s_sum
 			from v_all_passing_checks
 		)
-		select (s_sum * 100 / (s_sum + f_sum)) as SuccessfulChecks,
-			(f_sum * 100 / (s_sum + f_sum)) as UnsuccessfulChecks
+		select
+		    (
+		        case
+		            when ((s_sum + f_sum) = 0) then 0
+		            else (s_sum * 100 / (s_sum + f_sum))
+		        end
+            ) as SuccessfulChecks,
+		    (
+		        case
+		            when ((s_sum + f_sum) = 0) then 0
+		            else (f_sum * 100 / (s_sum + f_sum))
+		        end
+            ) as UnsuccessfulChecks
 		from cte_count_states;
 end;
 $$ language plpgsql;
