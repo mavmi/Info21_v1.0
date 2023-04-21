@@ -418,7 +418,7 @@ $$ language plpgsql;
 
 
 /*
- * 12)
+ * 13)
  * Determine the percentage of peers who have successfully
  * and unsuccessfully passed a check on their birthday
  */
