@@ -2221,6 +2221,173 @@ $$ language plpgsql;
 rollback;
 
 
+-------------------------
+--- prcdr_came_before ---
+-------------------------
+begin;
+do $$
+declare
+    ref refcursor := 'ref';
+    rec record;
+begin
+    call fnc_print('test prcdr_came_before');
+
+    truncate timetracking cascade;
+
+    insert into Peers values('username1', '2000-01-01');
+    insert into Peers values('username2', '2000-01-01');
+    insert into Peers values('username3', '2000-01-01');
+    insert into Peers values('username4', '2000-01-01');
+
+    call prcdr_came_before(ref, '12:00:00', 1);
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', '2024-01-01', '11:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', '2024-01-01', '12:00:00', 2);
+
+    call prcdr_came_before(ref, '12:00:00', 1);
+    for i in 1..2 loop
+        fetch ref into rec;
+        exit when not found;
+        if (i = 2) then
+            assert(false);
+        end if;
+
+        if (rec.Peer = 'username1') then
+            assert(true);
+        end if;
+    end loop;
+    close ref;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', '2024-01-02', '11:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', '2024-01-02', '12:00:00', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', '2024-01-03', '11:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', '2024-01-03', '12:00:00', 2);
+
+    call prcdr_came_before(ref, '12:00:00', 1);
+    for i in 1..2 loop
+        fetch ref into rec;
+        exit when not found;
+        if (i = 2) then
+            assert(false);
+        end if;
+
+        if (rec.Peer = 'username1') then
+            assert(true);
+        end if;
+    end loop;
+    close ref;
+
+    call prcdr_came_before(ref, '12:00:00', 2);
+    for i in 1..2 loop
+        fetch ref into rec;
+        exit when not found;
+        if (i = 2) then
+            assert(false);
+        end if;
+
+        if (rec.Peer = 'username1') then
+            assert(true);
+        end if;
+    end loop;
+    close ref;
+
+    call prcdr_came_before(ref, '12:00:00', 3);
+    for i in 1..2 loop
+        fetch ref into rec;
+        exit when not found;
+        if (i = 2) then
+            assert(false);
+        end if;
+
+        if (rec.Peer = 'username1') then
+            assert(true);
+        end if;
+    end loop;
+    close ref;
+
+    call prcdr_came_before(ref, '12:00:00', 4);
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username2', '2024-01-04', '11:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username2', '2024-01-04', '12:00:00', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username2', '2024-01-05', '11:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username2', '2024-01-05', '12:00:00', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', '2024-01-04', '15:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', '2024-01-04', '17:00:00', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username2', '2024-01-05', '15:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username2', '2024-01-05', '17:00:00', 2);
+
+    call prcdr_came_before(ref, '12:00:00', 1);
+    for i in 1..3 loop
+        fetch ref into rec;
+        exit when not found;
+        if (i = 3) then
+            assert(false);
+        end if;
+
+        if (rec.Peer = 'username1' or rec.Peer = 'username2') then
+            assert(true);
+        end if;
+    end loop;
+    close ref;
+
+    call prcdr_came_before(ref, '12:00:00', 2);
+    for i in 1..3 loop
+        fetch ref into rec;
+        exit when not found;
+        if (i = 3) then
+            assert(false);
+        end if;
+
+        if (rec.Peer = 'username1' or rec.Peer = 'username2') then
+            assert(true);
+        end if;
+    end loop;
+    close ref;
+
+    call prcdr_came_before(ref, '12:00:00', 3);
+    for i in 1..2 loop
+        fetch ref into rec;
+        exit when not found;
+        if (i = 2) then
+            assert(false);
+        end if;
+
+        if (rec.Peer = 'username1') then
+            assert(true);
+        end if;
+    end loop;
+    close ref;
+
+    call prcdr_came_before(ref, '12:00:00', 4);
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    call fnc_print('ok');
+end;
+$$ language plpgsql;
+rollback;
+
+
 /*
 do
 $insert_current_peers_visities$
