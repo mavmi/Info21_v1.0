@@ -1,3 +1,5 @@
+call fnc_print(' >>> part3 tests <<< ');
+
 ---------------------------------------
 --- fnc_readable_transferred_points ---
 ---------------------------------------
@@ -323,6 +325,651 @@ begin
         elseif (rec.Peer = 'username3' and rec.PointsChange != -3 and i != 3) then
             assert(false);
         else
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    call fnc_print('ok');
+end;
+$$ language plpgsql;
+rollback;
+
+
+-------------------------------------
+--- prcdr_totall_points_from_func ---
+-------------------------------------
+begin;
+do $$
+declare
+    ref refcursor := 'ref';
+    rec record;
+begin
+    call fnc_print('test prcdr_totall_points_from_func');
+
+    truncate TransferredPoints cascade;
+
+    insert into Peers values('username1', '2000-01-01');
+    insert into Peers values('username2', '2000-01-01');
+    insert into Peers values('username3', '2000-01-01');
+
+    call prcdr_totall_points_from_func(ref);
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'), 'username1', 'username2', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'), 'username1', 'username2', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'), 'username1', 'username2', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'), 'username1', 'username3', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'), 'username2', 'username3', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'), 'username2', 'username3', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'), 'username2', 'username1', 1);
+
+    call prcdr_totall_points_from_func(ref);
+    for i in 1..4 loop
+        fetch ref into rec;
+        exit when not found;
+        if (i = 4) then
+            assert(false);
+        end if;
+
+        if (rec.Peer = 'username1' and rec.PointsChange != 3 and i != 1) then
+            assert(false);
+        elseif (rec.Peer = 'username2' and rec.PointsChange != 0 and i != 2) then
+            assert(false);
+        elseif (rec.Peer = 'username3' and rec.PointsChange != -3 and i != 3) then
+            assert(false);
+        else
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    call fnc_print('ok');
+end;
+$$ language plpgsql;
+rollback;
+
+
+-------------------------------------
+--- prcdr_frequently_checked_task ---
+-------------------------------------
+begin;
+do $$
+declare
+    ref refcursor := 'ref';
+    rec record;
+begin
+    call fnc_print('test prcdr_frequently_checked_task');
+
+    truncate Checks cascade;
+
+    insert into Peers values('username1', '2000-01-01');
+    insert into Peers values('username2', '2000-01-01');
+    insert into Peers values('username3', '2000-01-01');
+
+    call prcdr_frequently_checked_task(ref);
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    insert into Checks values(fnc_next_id('Checks'), 'username1', 'CPP1', '2024-01-01');
+    insert into Checks values(fnc_next_id('Checks'), 'username2', 'CPP1', '2024-01-01');
+    insert into Checks values(fnc_next_id('Checks'), 'username3', 'SQL1', '2024-01-01');
+
+    call prcdr_frequently_checked_task(ref);
+    loop
+        fetch ref into rec;
+        if (rec.Day != '2024-01-01' and rec.Task != 'CPP1') then
+            assert(false);
+        end if;
+
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    insert into Checks values(fnc_next_id('Checks'), 'username1', 'CPP1', '2024-01-01');
+    insert into Checks values(fnc_next_id('Checks'), 'username2', 'CPP1', '2024-01-01');
+    insert into Checks values(fnc_next_id('Checks'), 'username3', 'SQL1', '2024-01-01');
+    insert into Checks values(fnc_next_id('Checks'), 'username3', 'SQL1', '2024-01-01');
+
+    call prcdr_frequently_checked_task(ref);
+    loop
+        fetch ref into rec;
+        if (rec.Day != '2024-01-01' and rec.Task != 'CPP1') then
+            assert(false);
+        end if;
+
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    insert into Checks values(fnc_next_id('Checks'), 'username1', 'CPP1', '2024-01-02');
+    insert into Checks values(fnc_next_id('Checks'), 'username2', 'A1', '2024-01-02');
+    insert into Checks values(fnc_next_id('Checks'), 'username3', 'A1', '2024-01-02');
+
+    call prcdr_frequently_checked_task(ref);
+    for i in 1..3 loop
+        fetch ref into rec;
+        exit when not found;
+
+        if (rec.Day = '2024-01-01' and rec.Task != 'CPP1') then
+            assert(false);
+        elseif (rec.Day = '2024-01-02' and rec.Task != 'A1') then
+            assert(false);
+        elseif (i = 3) then
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    insert into Checks values(fnc_next_id('Checks'), 'username1', 'SQL1', '2024-01-03');
+    insert into Checks values(fnc_next_id('Checks'), 'username2', 'DO1', '2024-01-03');
+    insert into Checks values(fnc_next_id('Checks'), 'username3', 'SQL1', '2024-01-03');
+
+    call prcdr_frequently_checked_task(ref);
+    for i in 1..4 loop
+        fetch ref into rec;
+        exit when not found;
+
+        if (rec.Day = '2024-01-01' and rec.Task != 'CPP1') then
+            assert(false);
+        elseif (rec.Day = '2024-01-02' and rec.Task != 'A1') then
+            assert(false);
+        elseif (rec.Day = '2024-01-03' and rec.Task != 'SQL1') then
+            assert(false);
+        elseif (i = 4) then
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    call fnc_print('ok');
+end;
+$$ language plpgsql;
+rollback;
+
+
+-------------------------------------
+--- prcdr_checking_time_duration ---
+-------------------------------------
+begin;
+do $$
+declare
+    ref refcursor := 'ref';
+    rec record;
+    check_id bigint;
+begin
+    call fnc_print('test prcdr_checking_time_duration');
+
+    truncate P2P cascade;
+
+    insert into Peers values('username1', '2000-01-01');
+    insert into Peers values('username2', '2000-01-01');
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username1', 'CPP1', '2024-01-01');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Start', '12:00:00');
+
+    call prcdr_checking_time_duration(ref);
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Success', '12:12:12');
+
+    call prcdr_checking_time_duration(ref);
+    loop
+        fetch ref into rec;
+        if (rec.CheckDuration != '00:12:12'::time) then
+            assert(false);
+        end if;
+
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username1', 'CPP1', '2024-01-01');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Start', '12:13:14');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Failure', '13:14:15');
+
+    call prcdr_checking_time_duration(ref);
+    loop
+        fetch ref into rec;
+        if (rec.CheckDuration != '01:01:01'::time) then
+            assert(false);
+        end if;
+
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    call fnc_print('ok');
+end;
+$$ language plpgsql;
+rollback;
+
+
+-------------------------------
+--- prcdr_passed_task_block ---
+-------------------------------
+begin;
+do $$
+declare
+    ref refcursor := 'ref';
+    rec record;
+    check_id bigint;
+begin
+    call fnc_print('test prcdr_passed_task_block');
+
+    truncate P2P cascade;
+    truncate Checks cascade;
+
+    insert into Peers values('username1', '2000-01-01');
+    insert into Peers values('username2', '2000-01-01');
+
+    call prcdr_passed_task_block(ref, 'CPP');
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username1', 'CPP1', '2024-01-01');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Start', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Success', '12:12:12');
+
+    call prcdr_passed_task_block(ref, 'CPP');
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username1', 'CPP2', '2024-01-01');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Start', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Success', '12:12:12');
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username1', 'CPP3', '2024-01-01');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Start', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Success', '12:12:12');
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username1', 'CPP4', '2024-01-01');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Start', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Success', '12:12:12');
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username1', 'CPP5', '2024-01-01');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Start', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Failure', '12:12:12');
+
+    call prcdr_passed_task_block(ref, 'CPP');
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username1', 'CPP5', '2024-01-12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Start', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Success', '12:12:12');
+
+    call prcdr_passed_task_block(ref, 'CPP');
+    for i in 1..2 loop
+        fetch ref into rec;
+        exit when not found;
+
+        if (i = 1 and rec.Peer = 'username1' and rec.Day = '2024-01-12') then
+            assert(true);
+        else
+            assert(false);
+        end if;
+
+        if (i = 2) then
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username2', 'SQL1', '2024-01-01');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username1', 'Start', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username1', 'Success', '12:12:12');
+    insert into Verter values(fnc_next_id('Verter'), check_id, 'Start', '12:12:12');
+    insert into Verter values(fnc_next_id('Verter'), check_id, 'Success', '12:12:12');
+
+    call prcdr_passed_task_block(ref, 'SQL');
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username2', 'SQL2', '2024-01-01');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username1', 'Start', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username1', 'Success', '12:12:12');
+    insert into Verter values(fnc_next_id('Verter'), check_id, 'Start', '12:12:12');
+    insert into Verter values(fnc_next_id('Verter'), check_id, 'Success', '12:12:12');
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username2', 'SQL3', '2024-01-01');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username1', 'Start', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username1', 'Success', '12:12:12');
+    insert into Verter values(fnc_next_id('Verter'), check_id, 'Start', '12:12:12');
+    insert into Verter values(fnc_next_id('Verter'), check_id, 'Failure', '12:12:12');
+
+    call prcdr_passed_task_block(ref, 'SQL');
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username2', 'SQL3', '2024-02-03');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username1', 'Start', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username1', 'Success', '12:12:12');
+    insert into Verter values(fnc_next_id('Verter'), check_id, 'Start', '12:12:12');
+    insert into Verter values(fnc_next_id('Verter'), check_id, 'Success', '12:12:12');
+
+    call prcdr_passed_task_block(ref, 'SQL');
+    for i in 1..2 loop
+        fetch ref into rec;
+        exit when not found;
+
+        if (i = 1 and rec.Peer = 'username2' and rec.Day = '2024-02-03') then
+            assert(true);
+        else
+            assert(false);
+        end if;
+
+        if (i = 2) then
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    call fnc_print('ok');
+end;
+$$ language plpgsql;
+rollback;
+
+
+------------------------------
+--- prcdr_recommended_peer ---
+------------------------------
+begin;
+do $$
+declare
+    ref refcursor := 'ref';
+    rec record;
+begin
+    call fnc_print('test prcdr_recommended_peer');
+
+    truncate Friends cascade;
+    truncate Recommendations cascade;
+
+    insert into Peers values('username1', '2000-01-01');
+    insert into Peers values('username2', '2000-01-01');
+    insert into Peers values('username3', '2000-01-01');
+    insert into Peers values('username4', '2000-01-01');
+    insert into Peers values('username5', '2000-01-01');
+    insert into Peers values('username6', '2000-01-01');
+
+    insert into Friends values(fnc_next_id('Friends'), 'username1', 'username2');
+    insert into Friends values(fnc_next_id('Friends'), 'username1', 'username3');
+
+    call prcdr_recommended_peer(ref);
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    insert into Recommendations values(fnc_next_id('Recommendations'), 'username2', 'username4');
+    insert into Recommendations values(fnc_next_id('Recommendations'), 'username3', 'username4');
+    insert into Recommendations values(fnc_next_id('Recommendations'), 'username3', 'username5');
+
+    call prcdr_recommended_peer(ref);
+    for i in 1..2 loop
+        fetch ref into rec;
+        exit when not found;
+
+        if (rec.RecommendedPeer = 'username4') then
+            assert(true);
+        else
+            assert(false);
+        end if;
+
+        if (i = 2) then
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    insert into Recommendations values(fnc_next_id('Recommendations'), 'username2', 'username5');
+
+    call prcdr_recommended_peer(ref);
+    for i in 1..2 loop
+        fetch ref into rec;
+        exit when not found;
+
+        if (rec.RecommendedPeer = 'username4') then
+            assert(true);
+        else
+            assert(false);
+        end if;
+
+        if (i = 2) then
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    insert into Friends values(fnc_next_id('Friends'), 'username1', 'username6');
+    insert into Recommendations values(fnc_next_id('Recommendations'), 'username6', 'username5');
+
+    call prcdr_recommended_peer(ref);
+    for i in 1..2 loop
+        fetch ref into rec;
+        exit when not found;
+
+        if (rec.RecommendedPeer = 'username5') then
+            assert(true);
+        else
+            assert(false);
+        end if;
+
+        if (i = 2) then
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    call fnc_print('ok');
+end;
+$$ language plpgsql;
+rollback;
+
+
+------------------------------------
+--- prcdr_percenge_started_block ---
+------------------------------------
+begin;
+do $$
+declare
+    ref refcursor := 'ref';
+    rec record;
+    check_id bigint;
+begin
+    call fnc_print('test prcdr_percenge_started_block');
+
+    truncate Checks cascade;
+    truncate P2P cascade;
+    truncate Peers cascade;
+
+    insert into Peers values('username1', '2000-01-01');
+    insert into Peers values('username2', '2000-01-01');
+    insert into Peers values('username3', '2000-01-01');
+    insert into Peers values('username4', '2000-01-01');
+    insert into Peers values('username5', '2000-01-01');
+
+    call prcdr_percenge_started_block(ref, 'CPP', 'SQL');
+    for i in 1..2 loop
+        fetch ref into rec;
+        exit when not found;
+
+        assert(rec.StartedBlock1 = 0);
+        assert(rec.StartedBlock2 = 0);
+        assert(rec.StartedBothBlocks = 0);
+        assert(rec.DidntStartAnyBlock = 100);
+
+        if (i = 2) then
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username1', 'CPP1', '2024-01-01');
+
+    call prcdr_percenge_started_block(ref, 'CPP', 'SQL');
+    for i in 1..2 loop
+        fetch ref into rec;
+        exit when not found;
+
+        assert(rec.StartedBlock1 = 20);
+        assert(rec.StartedBlock2 = 0);
+        assert(rec.StartedBothBlocks = 0);
+        assert(rec.DidntStartAnyBlock = 80);
+        if (i = 2) then
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Start', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Success', '12:12:12');
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username1', 'CPP2', '2024-01-01');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Start', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Success', '12:12:12');
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username1', 'CPP3', '2024-01-01');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Start', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Success', '12:12:12');
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username1', 'CPP4', '2024-01-01');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Start', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Success', '12:12:12');
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username1', 'CPP5', '2024-01-01');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Start', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Failure', '12:12:12');
+
+    call prcdr_percenge_started_block(ref, 'CPP', 'SQL');
+    for i in 1..2 loop
+        fetch ref into rec;
+        exit when not found;
+
+        assert(rec.StartedBlock1 = 20);
+        assert(rec.StartedBlock2 = 0);
+        assert(rec.StartedBothBlocks = 0);
+        assert(rec.DidntStartAnyBlock = 80);
+        if (i = 2) then
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username1', 'CPP5', '2024-01-01');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Start', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Success', '12:12:12');
+
+    call prcdr_percenge_started_block(ref, 'CPP', 'SQL');
+    for i in 1..2 loop
+        fetch ref into rec;
+        exit when not found;
+
+        assert(rec.StartedBlock1 = 20);
+        assert(rec.StartedBlock2 = 0);
+        assert(rec.StartedBothBlocks = 0);
+        assert(rec.DidntStartAnyBlock = 80);
+        if (i = 2) then
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username2', 'SQL1', '2024-01-01');
+
+    call prcdr_percenge_started_block(ref, 'CPP', 'SQL');
+    for i in 1..2 loop
+        fetch ref into rec;
+        exit when not found;
+
+        assert(rec.StartedBlock1 = 20);
+        assert(rec.StartedBlock2 = 20);
+        assert(rec.StartedBothBlocks = 0);
+        assert(rec.DidntStartAnyBlock = 60);
+        if (i = 2) then
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username1', 'SQL1', '2024-01-01');
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username3', 'SQL1', '2024-01-01');
+
+    call prcdr_percenge_started_block(ref, 'CPP', 'SQL');
+    for i in 1..2 loop
+        fetch ref into rec;
+        exit when not found;
+
+        assert(rec.StartedBlock1 = 20);
+        assert(rec.StartedBlock2 = 60);
+        assert(rec.StartedBothBlocks = 20);
+        assert(rec.DidntStartAnyBlock = 40);
+        if (i = 2) then
             assert(false);
         end if;
     end loop;

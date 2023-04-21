@@ -145,7 +145,7 @@ $$ language plpgsql;
 /*
  * 6)
  * Calculate the change in the number of peer points of each
- * peer using the fnc_readable_transferred_points() funcion
+ * peer using the fnc_readable_transferred_points() function
  */
 create or replace procedure prcdr_totall_points_from_func(ref refcursor) as
 $$
