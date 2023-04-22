@@ -25,8 +25,6 @@ begin
 end;
 $$ language plpgsql;
 
--- select * from fnc_readable_transferred_points() order by 1;
-
 
 /*
  * 2)
@@ -100,10 +98,6 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_passed_state_percentage('ref');
--- fetch all in "ref";
-
 
 /*
  * 5)
@@ -137,10 +131,6 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_total_points('ref');
--- fetch all in "ref";
-
 
 /*
  * 6)
@@ -170,10 +160,6 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_totall_points_from_func('ref');
--- fetch all in "ref";
-
 
 /*
  * 7)
@@ -197,10 +183,6 @@ begin
 		where c2.date is null;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_frequently_checked_task('ref');
--- fetch all in "ref";
 
 
 /*
@@ -228,10 +210,6 @@ begin
 		where end1.count = 2 limit 1;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_checking_time_duration('ref');
--- fetch all in "ref";
 
 
 /*
@@ -263,11 +241,6 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_passed_task_block('ref', 'A');
--- fetch all in "ref";
-
-
 
 /*
  * 10)
@@ -291,10 +264,6 @@ begin
 		) as recommendations_count;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_recommended_peer('ref');
--- fetch all in "ref";
 
 
 /*
@@ -387,10 +356,6 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_percenge_started_block('ref', 'CPP', 'DO');
--- fetch all in "ref";
-
 
 /*
  * 12)
@@ -411,10 +376,6 @@ begin
 		limit n;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_greates_friends_number('ref', 5);
--- fetch all in "ref";
 
 
 /*
@@ -467,10 +428,6 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_passed_on_birthday('ref');
--- fetch all in "ref";
-
 
 /*
  * 14)
@@ -498,10 +455,6 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_total_peer_xp_amount('ref');
--- fetch all in "ref";
-
 
 /*
  * 15)
@@ -526,10 +479,6 @@ begin
 		);
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_did_peer_tasks('ref', 'SQL', 'A', 'DO');
--- fetch all in "ref";
 
 
 /*
@@ -560,10 +509,6 @@ begin
 		order by Task;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_preceding_tasks('ref');
--- fetch all in "ref";
 
 
 /*
@@ -598,10 +543,6 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_checks_lucky_days('ref', 2);
--- fetch all in "ref";
-
 
 /*
  * 18)
@@ -622,10 +563,6 @@ begin
 		limit 1;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_peer_with_highest_passed_tasks_number('ref');
--- fetch all in "ref";
 
 
 /*
@@ -648,10 +585,6 @@ begin
 		limit 1;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_peer_with_highest_xp('ref');
--- fetch all in "ref";
 
 
 /*
@@ -694,10 +627,6 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_longest_campus_visit_today('ref');
--- fetch all in "ref";
-
 
 /*
  * 21)
@@ -722,10 +651,6 @@ begin
 		order by peer;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_came_before('ref', '15:00:00', 3);
--- fetch all in "ref";
 
 
 /*
@@ -754,10 +679,6 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_left_during_time('ref', 2, 15);
--- fetch all in "ref";
-
 
 /*
  * 23)
@@ -774,10 +695,6 @@ begin
 		limit 1;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_who_come_laster('ref');
--- fetch all in "ref";
 
 
 /*
@@ -812,10 +729,6 @@ begin
 		order by peer;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_who_come_back_in_time('ref', 800);
--- fetch all in "ref";
 
 
 /*
@@ -868,7 +781,3 @@ begin
 			right join cte_generate_months on extract(month from timestamp_math) = month;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_early_in_birthday('ref');
--- fetch all in "ref";

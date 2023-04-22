@@ -4,16 +4,6 @@
 \set recreating_db_path executing/recreateBonusDB.sql
 \set filling_db_path utils/u_part4.sql
 
--------------------------------------
--- CREATING OR REFRESHING DATABASE --
--------------------------------------
--- \i :recreating_db_path
-
-----------------------
--- FILLING DATABASE --
-----------------------
--- \i :filling_db_path
-
 
 ----------------
 -- PROCEDURES --
@@ -40,9 +30,6 @@ begin
 	end loop;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE --
--- call prcdr_drop_tables_started_TableName();
 
 
 /*
@@ -76,9 +63,6 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE --
--- call prcdr_funcs_with_arguments('', 0);
-
 
 /*
  * 3)
@@ -102,9 +86,6 @@ begin
 	end loop;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE --
--- call prcdr_destroy_DML_triggers(0);
 
 
 /*
@@ -140,6 +121,3 @@ begin
 	end loop;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE --
--- call prcdr_find_substr_in_obj('without', 'rewrite');
