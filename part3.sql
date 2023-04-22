@@ -138,7 +138,7 @@ end;
 $$ language plpgsql;
 
 -- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_total_points_changes('ref');
+-- call prcdr_total_points('ref');
 -- fetch all in "ref";
 
 

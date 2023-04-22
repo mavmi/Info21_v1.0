@@ -2881,7 +2881,6 @@ begin
             assert(false);
         end if;
 
-        raise notice '%:%', rec.Month, rec.EarlyEntries;
         if (rec.Month = 'January  ' and rec.EarlyEntries = 50) then
             assert(true);
         elseif (rec.Month = 'February ' and rec.EarlyEntries = 50) then
@@ -2960,159 +2959,146 @@ $$ language plpgsql;
 rollback;
 
 
-/*
-do
-$insert_current_peers_visities$
-begin
-	/* Yesterday visities */
+-----------
+-- print --
+-----------
+call fnc_print('fnc_readable_transferred_points');
+select * from fnc_readable_transferred_points();
 
-	-- minuse 1 day & 8:03
-	insert into TimeTracking values(
-		fnc_next_id('TimeTracking'),
-		'Strangler',
-		(LOCALTIMESTAMP - interval '1 day 483 minute')::date,
-		(LOCALTIMESTAMP(0) - interval '1 day 483 minute')::time,
-		1
-	);
-	-- minuse 1 day & 8:00
-	insert into TimeTracking values(
-		fnc_next_id('TimeTracking'),
-		'Strangler',
-		(LOCALTIMESTAMP - interval '1 day 300 minute')::date,
-		(LOCALTIMESTAMP(0) - interval '1 day 300 minute')::time,
-		2
-	);
+call fnc_print('fnc_successfully_passed_tasks');
+select * from fnc_successfully_passed_tasks();
 
-	-- minuse 1 day & 5:13
-	insert into TimeTracking values(
-		fnc_next_id('TimeTracking'),
-		'Gabriel',
-		(LOCALTIMESTAMP - interval '1 day 313 minute')::date,
-		(LOCALTIMESTAMP(0) - interval '1 day 313 minute')::time,
-		1
-	);
-	-- minuse 1 day & 3:04
-	insert into TimeTracking values(
-		fnc_next_id('TimeTracking'),
-		'Gabriel',
-		(LOCALTIMESTAMP - interval '1 day 184 minute')::date,
-		(LOCALTIMESTAMP(0) - interval '1 day 184 minute')::time,
-		2
-	);
+call fnc_print('fnc_hold_day_in_campus_list');
+select * from fnc_hold_day_in_campus_list('2022-12-07');
 
-	-- minuse 1 day & 4:17
-	insert into TimeTracking values(
-		fnc_next_id('TimeTracking'),
-		'Near_Muslim',
-		(LOCALTIMESTAMP - interval '1 day 257 minute')::date,
-		(LOCALTIMESTAMP(0) - interval '1 day 257 minute')::time,
-		1
-	);
-	-- minuse 1 day & 0:30
-	insert into TimeTracking values(
-		fnc_next_id('TimeTracking'),
-		'Near_Muslim',
-		(LOCALTIMESTAMP - interval '1 day 30 minute')::date,
-		(LOCALTIMESTAMP(0) - interval '1 day 30 minute')::time,
-		2
-	);
+begin;
+call fnc_print('prcdr_passed_state_percentage');
+call prcdr_passed_state_percentage('ref');
+fetch all in "ref";
+commit;
 
-	-- minuse 1 day & 3:39
-	insert into TimeTracking values(
-		fnc_next_id('TimeTracking'),
-		'Luisi',
-		(LOCALTIMESTAMP - interval '1 day 219 minute')::date,
-		(LOCALTIMESTAMP(0) - interval '1 day 219 minute')::time,
-		1
-	);
-	-- minuse 1 day & 0:30
-	insert into TimeTracking values(
-		fnc_next_id('TimeTracking'),
-		'Luisi',
-		(LOCALTIMESTAMP - interval '1 day 30 minute')::date,
-		(LOCALTIMESTAMP(0) - interval '1 day 30 minute')::time,
-		2
-	);
+begin;
+call fnc_print('prcdr_total_points');
+call prcdr_total_points('ref');
+fetch all in "ref";
+commit;
 
-	/* Today visities */
+begin;
+call fnc_print('prcdr_totall_points_from_func');
+call prcdr_totall_points_from_func('ref');
+fetch all in "ref";
+commit;
 
-	-- minuse 15:03
-	insert into TimeTracking values(
-		fnc_next_id('TimeTracking'),
-		'Pirate',
-		(LOCALTIMESTAMP - interval '903 minute')::date,
-		(LOCALTIMESTAMP(0) - interval '903 minute')::time,
-		1
-	);
-	-- minuse 8:00
-	insert into TimeTracking values(
-		fnc_next_id('TimeTracking'),
-		'Pirate',
-		(LOCALTIMESTAMP - interval '300 minute')::date,
-		(LOCALTIMESTAMP(0) - interval '300 minute')::time,
-		2
-	);
+begin;
+call fnc_print('prcdr_frequently_checked_task');
+call prcdr_frequently_checked_task('ref');
+fetch all in "ref";
+commit;
 
+begin;
+call fnc_print('prcdr_checking_time_duration');
+call prcdr_checking_time_duration('ref');
+fetch all in "ref";
+commit;
 
-	-- minuse 5:13
-	insert into TimeTracking values(
-		fnc_next_id('TimeTracking'),
-		'Near_Muslim',
-		(LOCALTIMESTAMP - interval '313 minute')::date,
-		(LOCALTIMESTAMP(0) - interval '313 minute')::time,
-		1
-	);
-	-- minuse 3:04
-	insert into TimeTracking values(
-		fnc_next_id('TimeTracking'),
-		'Near_Muslim',
-		(LOCALTIMESTAMP - interval '184 minute')::date,
-		(LOCALTIMESTAMP(0) - interval '184 minute')::time,
-		2
-	);
+begin;
+call fnc_print('prcdr_passed_task_block');
+call prcdr_passed_task_block('ref', 'CPP');
+fetch all in "ref";
+commit;
 
-	-- minuse 4:17
-	insert into TimeTracking values(
-		fnc_next_id('TimeTracking'),
-		'Pirate',
-		(LOCALTIMESTAMP - interval '257 minute')::date,
-		(LOCALTIMESTAMP(0) - interval '257 minute')::time,
-		1
-	);
-	-- minuse 0:30
-	insert into TimeTracking values(
-		fnc_next_id('TimeTracking'),
-		'Pirate',
-		(LOCALTIMESTAMP - interval '30 minute')::date,
-		(LOCALTIMESTAMP(0) - interval '30 minute')::time,
-		2
-	);
+begin;
+call fnc_print('prcdr_recommended_peer');
+call prcdr_recommended_peer('ref');
+fetch all in "ref";
+commit;
 
-	-- minuse 6:37
-	insert into TimeTracking values(
-		fnc_next_id('TimeTracking'),
-		'Strangler',
-		(LOCALTIMESTAMP - interval '397 minute')::date,
-		(LOCALTIMESTAMP(0) - interval '397 minute')::time,
-		1
-	);
-	-- minuse 3:21
-	insert into TimeTracking values(
-		fnc_next_id('TimeTracking'),
-		'Strangler',
-		(LOCALTIMESTAMP - interval '201 minute')::date,
-		(LOCALTIMESTAMP(0) - interval '201 minute')::time,
-		2
-	);
+begin;
+call fnc_print('prcdr_percenge_started_block');
+call prcdr_percenge_started_block('ref', 'CPP', 'SQL');
+fetch all in "ref";
+commit;
 
-	-- minuse 6:34 (still at school)
-	insert into TimeTracking values(
-		fnc_next_id('TimeTracking'),
-		'Luisi',
-		(LOCALTIMESTAMP - interval '700 minute')::date,
-		(LOCALTIMESTAMP(0) - interval '700 minute')::time,
-		1
-	);
-end
-$insert_current_peers_visities$;
-*/
+begin;
+call fnc_print('prcdr_greates_friends_number');
+call prcdr_greates_friends_number('ref', 3);
+fetch all in "ref";
+commit;
+
+begin;
+call fnc_print('prcdr_passed_on_birthday');
+call prcdr_passed_on_birthday('ref');
+fetch all in "ref";
+commit;
+
+begin;
+call fnc_print('prcdr_total_peer_xp_amount');
+call prcdr_total_peer_xp_amount('ref');
+fetch all in "ref";
+commit;
+
+begin;
+call fnc_print('prcdr_did_peer_tasks');
+call prcdr_did_peer_tasks('ref', 'CPP', 'SQL', 'DO');
+fetch all in "ref";
+commit;
+
+begin;
+call fnc_print('prcdr_preceding_tasks');
+call prcdr_preceding_tasks('ref');
+fetch all in "ref";
+commit;
+
+begin;
+call fnc_print('prcdr_checks_lucky_days');
+call prcdr_checks_lucky_days('ref', 4);
+fetch all in "ref";
+commit;
+
+begin;
+call fnc_print('prcdr_peer_with_highest_passed_tasks_number');
+call prcdr_peer_with_highest_passed_tasks_number('ref');
+fetch all in "ref";
+commit;
+
+begin;
+call fnc_print('prcdr_peer_with_highest_xp');
+call prcdr_peer_with_highest_xp('ref');
+fetch all in "ref";
+commit;
+
+begin;
+call fnc_print('prcdr_longest_campus_visit_today');
+call prcdr_longest_campus_visit_today('ref');
+fetch all in "ref";
+commit;
+
+begin;
+call fnc_print('prcdr_came_before');
+call prcdr_came_before('ref', '15:00:00', 3);
+fetch all in "ref";
+commit;
+
+begin;
+call fnc_print('prcdr_left_during_time');
+call prcdr_left_during_time('ref', 4, 300);
+fetch all in "ref";
+commit;
+
+begin;
+call fnc_print('prcdr_who_come_laster');
+call prcdr_who_come_laster('ref');
+fetch all in "ref";
+commit;
+
+begin;
+call fnc_print('prcdr_who_come_back_in_time');
+call prcdr_who_come_back_in_time('ref', 2);
+fetch all in "ref";
+commit;
+
+begin;
+call fnc_print('prcdr_early_in_birthday');
+call prcdr_early_in_birthday('ref');
+fetch all in "ref";
+commit;
