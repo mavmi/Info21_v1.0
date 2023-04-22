@@ -2388,6 +2388,578 @@ $$ language plpgsql;
 rollback;
 
 
+------------------------------
+--- prcdr_left_during_time ---
+------------------------------
+begin;
+do $$
+declare
+    ref refcursor := 'ref';
+    rec record;
+begin
+    call fnc_print('test prcdr_left_during_time');
+
+    truncate TimeTracking cascade;
+
+    insert into Peers values('username1', '2000-01-01');
+    insert into Peers values('username2', '2000-01-01');
+    insert into Peers values('username3', '2000-01-01');
+    insert into Peers values('username4', '2000-01-01');
+
+    call prcdr_left_during_time(ref, 1, 10);
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '3 days'::interval, '12:00:00', 1);
+
+    call prcdr_left_during_time(ref, 0, 10);
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '3 days'::interval, '13:00:00', 2);
+
+    call prcdr_left_during_time(ref, 0, 10);
+    loop
+        fetch ref into rec;
+
+        if (rec.Peer = 'username1') then
+            assert(true);
+        else
+            assert(false);
+        end if;
+
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '2 days'::interval, '12:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '2 days'::interval, '13:00:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '1 day'::interval, '12:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '1 day'::interval, '13:00:00', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username2', current_date - '3 days'::interval, '12:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username2', current_date - '3 days'::interval, '13:00:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username2', current_date - '2 days'::interval, '12:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username2', current_date - '2 days'::interval, '13:00:00', 2);
+
+    call prcdr_left_during_time(ref, 0, 10);
+    for i in 1..3 loop
+        fetch ref into rec;
+        exit when not found;
+        if (i = 3) then
+            assert(false);
+        end if;
+
+        if (rec.Peer = 'username1' or rec.Peer = 'username2') then
+            assert(true);
+        else
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    call prcdr_left_during_time(ref, 1, 10);
+    for i in 1..3 loop
+        fetch ref into rec;
+        exit when not found;
+        if (i = 3) then
+            assert(false);
+        end if;
+
+        if (rec.Peer = 'username1' or rec.Peer = 'username2') then
+            assert(true);
+        else
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    call prcdr_left_during_time(ref, 2, 10);
+    loop
+        fetch ref into rec;
+
+        if (rec.Peer = 'username1') then
+            assert(true);
+        else
+            assert(false);
+        end if;
+
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    truncate TimeTracking cascade;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '10 days'::interval, '12:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '10 days'::interval, '13:00:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '9 days'::interval, '12:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '9 days'::interval, '13:00:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '8 days'::interval, '12:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '8 days'::interval, '13:00:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '7 days'::interval, '12:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '7 days'::interval, '13:00:00', 2);
+
+    call prcdr_left_during_time(ref, 0, 10);
+    loop
+        fetch ref into rec;
+
+        if (rec.Peer = 'username1') then
+            assert(true);
+        else
+            assert(false);
+        end if;
+
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    call prcdr_left_during_time(ref, 0, 5);
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    call fnc_print('ok');
+end;
+$$ language plpgsql;
+rollback;
+
+
+-----------------------------
+--- prcdr_who_come_laster ---
+-----------------------------
+begin;
+do $$
+declare
+    ref refcursor := 'ref';
+    rec record;
+begin
+    call fnc_print('test prcdr_who_come_laster');
+
+    truncate TimeTracking cascade;
+
+    insert into Peers values('username1', '2000-01-01');
+    insert into Peers values('username2', '2000-01-01');
+    insert into Peers values('username3', '2000-01-01');
+    insert into Peers values('username4', '2000-01-01');
+
+    call prcdr_who_come_laster(ref);
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date, '12:00:00', 1);
+
+    call prcdr_who_come_laster(ref);
+    loop
+        fetch ref into rec;
+
+        if (rec.Peer = 'username1') then
+            assert(true);
+        else
+            assert(false);
+        end if;
+
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username2', current_date, '13:00:00', 1);
+
+    call prcdr_who_come_laster(ref);
+    loop
+        fetch ref into rec;
+
+        if (rec.Peer = 'username2') then
+            assert(true);
+        else
+            assert(false);
+        end if;
+
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date, '13:00:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date, '14:00:00', 1);
+
+    call prcdr_who_come_laster(ref);
+    loop
+        fetch ref into rec;
+
+        if (rec.Peer = 'username1') then
+            assert(true);
+        else
+            assert(false);
+        end if;
+
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date, '15:00:00', 2);
+
+    call prcdr_who_come_laster(ref);
+    loop
+        fetch ref into rec;
+
+        if (rec.Peer = 'username1') then
+            assert(true);
+        else
+            assert(false);
+        end if;
+
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    call fnc_print('ok');
+end;
+$$ language plpgsql;
+rollback;
+
+
+-----------------------------------
+--- prcdr_who_come_back_in_time ---
+-----------------------------------
+begin;
+do $$
+declare
+    ref refcursor := 'ref';
+    rec record;
+begin
+    call fnc_print('test prcdr_who_come_back_in_time');
+
+    truncate TimeTracking cascade;
+
+    insert into Peers values('username1', '2000-01-01');
+    insert into Peers values('username2', '2000-01-01');
+    insert into Peers values('username3', '2000-01-01');
+    insert into Peers values('username4', '2000-01-01');
+
+    call prcdr_who_come_back_in_time(ref, 21);
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date, '12:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date, '12:10:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date, '13:30:00', 1);
+
+    call prcdr_who_come_back_in_time(ref, 21);
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    truncate TimeTracking cascade;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '2 days'::interval, '12:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '2 days'::interval, '12:10:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '2 days'::interval, '13:30:00', 1);
+
+    call prcdr_who_come_back_in_time(ref, 21);
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    truncate TimeTracking cascade;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '1 day'::interval, '12:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '1 day'::interval, '12:10:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '1 day'::interval, '12:20:00', 1);
+
+    call prcdr_who_come_back_in_time(ref, 21);
+    loop
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '1 day'::interval, '12:30:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '1 day'::interval, '13:00:00', 1);
+
+    call prcdr_who_come_back_in_time(ref, 21);
+    loop
+        fetch ref into rec;
+
+        if (rec.Peer = 'username1') then
+            assert(true);
+        else
+            assert(false);
+        end if;
+
+        fetch ref into rec;
+        exit when not found;
+        assert(false);
+    end loop;
+    close ref;
+
+    truncate TimeTracking cascade;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '1 day'::interval, '12:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '1 day'::interval, '12:10:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', current_date - '1 day'::interval, '13:20:00', 1);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username2', current_date - '1 day'::interval, '12:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username2', current_date - '1 day'::interval, '12:10:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username2', current_date - '1 day'::interval, '13:20:00', 1);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username3', current_date - '1 day'::interval, '12:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username3', current_date - '1 day'::interval, '12:10:00', 2);
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', current_date - '1 day'::interval, '12:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', current_date - '1 day'::interval, '12:10:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', current_date - '1 day'::interval, '12:20:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', current_date - '1 day'::interval, '12:30:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', current_date - '1 day'::interval, '12:40:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', current_date - '1 day'::interval, '12:50:00', 2);
+
+    call prcdr_who_come_back_in_time(ref, 21);
+     for i in 1..3 loop
+        fetch ref into rec;
+        exit when not found;
+        if (i = 3) then
+            assert(false);
+        end if;
+
+        if (rec.Peer = 'username1' or rec.Peer = 'username2') then
+            assert(true);
+        else
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    call fnc_print('ok');
+end;
+$$ language plpgsql;
+rollback;
+
+
+-------------------------------
+--- prcdr_early_in_birthday ---
+-------------------------------
+begin;
+do $$
+declare
+    ref refcursor := 'ref';
+    rec record;
+begin
+    call fnc_print('test prcdr_early_in_birthday');
+
+    truncate TimeTracking cascade;
+
+    insert into Peers values('username1', '2000-01-01');
+    insert into Peers values('username2', '2000-01-01');
+    insert into Peers values('username3', '2000-02-02');
+    insert into Peers values('username4', '2000-02-02');
+
+    call prcdr_early_in_birthday(ref);
+    for i in 1..13 loop
+        fetch ref into rec;
+        exit when not found;
+        if (i = 13) then
+            assert(false);
+        end if;
+
+        if (rec.Month = 'January  ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'February ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'March    ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'April    ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'May      ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'June     ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'July     ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'August   ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'September' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'October  ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'November ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'December ' and rec.EarlyEntries = 0) then
+            assert(true);
+        else
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', '2020-01-01', '10:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', '2020-01-01', '10:00:00', 2);
+
+    call prcdr_early_in_birthday(ref);
+    for i in 1..13 loop
+        fetch ref into rec;
+        exit when not found;
+        if (i = 13) then
+            assert(false);
+        end if;
+
+        if (rec.Month = 'January  ' and rec.EarlyEntries = 100) then
+            assert(true);
+        elseif (rec.Month = 'February ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'March    ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'April    ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'May      ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'June     ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'July     ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'August   ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'September' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'October  ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'November ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'December ' and rec.EarlyEntries = 0) then
+            assert(true);
+        else
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username3', '2020-02-02', '10:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username3', '2020-02-02', '10:00:00', 2);
+
+    call prcdr_early_in_birthday(ref);
+    for i in 1..13 loop
+        fetch ref into rec;
+        exit when not found;
+        if (i = 13) then
+            assert(false);
+        end if;
+
+        raise notice '%:%', rec.Month, rec.EarlyEntries;
+        if (rec.Month = 'January  ' and rec.EarlyEntries = 50) then
+            assert(true);
+        elseif (rec.Month = 'February ' and rec.EarlyEntries = 50) then
+            assert(true);
+        elseif (rec.Month = 'March    ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'April    ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'May      ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'June     ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'July     ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'August   ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'September' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'October  ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'November ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'December ' and rec.EarlyEntries = 0) then
+            assert(true);
+        else
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', '2020-02-12', '10:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', '2020-02-12', '10:00:00', 2);
+
+    call prcdr_early_in_birthday(ref);
+    for i in 1..13 loop
+        fetch ref into rec;
+        exit when not found;
+        if (i = 13) then
+            assert(false);
+        end if;
+
+        raise notice '%:%', rec.Month, rec.EarlyEntries;
+        if (rec.Month = 'January  ' and rec.EarlyEntries = 33) then
+            assert(true);
+        elseif (rec.Month = 'February ' and rec.EarlyEntries = 67) then
+            assert(true);
+        elseif (rec.Month = 'March    ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'April    ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'May      ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'June     ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'July     ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'August   ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'September' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'October  ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'November ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'December ' and rec.EarlyEntries = 0) then
+            assert(true);
+        else
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    call fnc_print('ok');
+end;
+$$ language plpgsql;
+rollback;
+
+
 /*
 do
 $insert_current_peers_visities$
