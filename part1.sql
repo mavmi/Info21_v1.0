@@ -97,28 +97,6 @@ begin
         return;
     end if;
 
-    /*
-     * Tasks pull:
-     * 1. 'Wolf'        -> CPP1-CPP4, CPP5(2)
-     * 2. 'Sprat_eater' -> DO1(2), DO2(2), CPP1, CPP2(2), CPP3
-     * 3. 'Near_Muslim' -> DO1-DO6, CPP1, SQL1
-     * 4. 'Pirate'      -> CPP1-CPP5
-     * 5. 'Strangler'   -> A1-A8, SQL1
-     * 6. 'Gabriel'     -> A1-A7, A8(2), SQL1-SQL2
-     * 7. 'Luisi'       -> SQL1-SQL2, SQL3(3)
-     */
-
-     /*
-      * Successfull passeds on birthday [id, module, state]:
-      * 1. 'Wolf'        -> [27, CPP1, Success]
-      * 2. 'Sprat_eater' -> [28, CPP2, Failure]
-      * 3. 'Near_Muslim' -> [5, DO1, Success]
-      * 4. 'Pirate'      -> [didnt passed to birthday]
-      * 5. 'Strangler'   -> [12, A4, Success]
-      * 6. 'Gabriel'     -> [37, A8, Failure]
-      * 7. 'Luisi'       -> [50, SQL3, Success]
-      */
-
     insert into Checks values(fnc_next_id('Checks'), 'Near_Muslim', 'DO1', '2022-12-01');
     insert into Checks values(fnc_next_id('Checks'), 'Strangler', 'A1', '2022-12-01');
     insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'A1', '2022-12-01');
@@ -187,11 +165,11 @@ begin
     insert into Checks values(fnc_next_id('Checks'), 'Luisi', 'SQL3', '2023-03-06');
 
     insert into Checks values(fnc_next_id('Checks'), 'Luisi', 'SQL3', '2023-03-07');
-    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'DO2', '2023-03-07'); --Repassing
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'DO2', '2023-03-07');
     insert into Checks values(fnc_next_id('Checks'), 'Near_Muslim', 'SQL1', '2023-03-07');
-    insert into Checks values(fnc_next_id('Checks'), 'Wolf', 'CPP5', '2023-03-07'); --Repassing
+    insert into Checks values(fnc_next_id('Checks'), 'Wolf', 'CPP5', '2023-03-07');
 
-    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'DO1', '2023-03-08'); --Repassing
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'DO1', '2023-03-08');
 end;
 $$ language plpgsql;
 
@@ -578,18 +556,6 @@ begin
         return;
     end if;
 
-    /*
-        Friends:
-
-        'Wolf' -> ['Gabriel'/'Luisi'/'Pirate'/'Sprat_eater'/'Strangler'],
-        'Sprat_eater' -> ['Luisi'/'Near_Muslim'/'Wolf']
-        'Near_Muslim' -> ['Gabriel'/'Luisi'/'Pirate'/'Sprat_eater']
-        'Pirate' -> ['Near_Muslim'/'Strangler'/'Wolf'],
-        'Strangler' -> ['Pirate'/'Wolf'],
-        'Gabriel' -> ['Luisi'/'Near_Muslim'/'Wolf'],
-        'Luisi' -> ['Gabriel'/'Near_Muslim'/'Sprat_eater'/'Wolf']
-    */
-
     insert into Friends values(fnc_next_id('Friends'), 'Wolf', 'Sprat_eater');
     insert into Friends values(fnc_next_id('Friends'), 'Wolf', 'Luisi');
     insert into Friends values(fnc_next_id('Friends'), 'Wolf', 'Gabriel');
@@ -718,17 +684,6 @@ begin
     if (fill = false) then
         return;
     end if;
-
-    /*
-     * Coming on birthday ([+] -> before 12:00):
-     * 1. Near_Muslim -> '1980-12-10'
-     * 2. Strangler -> '2000-12-24' [+]
-     * 3. Wolf -> '1990-02-04' [+]
-     * 4. Sprat_eater -> '1999-02-05' [+]
-     * 5. Gabriel -> '1998-02-12'
-     * 6. Pirate -> '1994-02-27'
-     * 7. Luisi -> '1977-03-07' [+]
-     */
 
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Wolf', '2022-12-01', '11:24:11', 1);
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Wolf', '2022-12-01', '23:42:00', 2);

@@ -1,14 +1,3 @@
------------------------
--- SETTING VARIABLES --
------------------------
-\set recreating_db_path executing/recreateBonusDB.sql
-\set filling_db_path utils/u_part4.sql
-
-
-----------------
--- PROCEDURES --
-----------------
-
 /*
  * 1)
  * Drop all those tables whose names begin with the phrase 'TableName'
