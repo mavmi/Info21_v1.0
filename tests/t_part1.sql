@@ -1,5 +1,3 @@
-call fnc_print(' >>> part1 tests <<< ');
-
 ----------------------------------
 -- trg_verter_successful_checks --
 ----------------------------------

@@ -4,7 +4,7 @@
 create or replace procedure fnc_print(msg varchar) as
 $$
 begin
-	raise notice '%', upper(msg);
+	raise info '%', upper(msg);
 end;
 $$ language plpgsql;
 
