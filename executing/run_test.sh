@@ -3,9 +3,10 @@
 INFO_COLOR="\\\x1B[33m";
 OK_COLOR="\\\x1B[32m";
 ERROR_COLOR="\\\x1B[31m";
-HEADER_COLOR="\\\x1B[34m"
 DEFAULT_COLOR="\\\x1B[37m";
 OUTPUT_COLOR="\\\x1B[35m";
+
+HEADER_COLOR="\033[34m"
 
 #1 - part num
 run_test(){
@@ -16,11 +17,9 @@ run_test(){
 		db_name='info21_bonus';
 	fi
 
-# 	echo -e $HEADER_COLOR;
 	echo -e "\t~~~~~~~~~~~~~~~~~~~~~";
 	echo -e "\t>>> TESTS_PART_$1 <<<";
 	echo -e "\t~~~~~~~~~~~~~~~~~~~~~";
-# 	echo -e -n $DEFAULT_COLOR;
 
     echo -e "$(\
 
