@@ -1,10 +1,11 @@
 #!/bin/bash
 
-INFO_COLOR='\x1b[1;33m';
-OK_COLOR='\x1b[0;32m';
-ERROR_COLOR='\x1b[0;31m';
-HEADER_COLOR='\x1b[0;36m'
-DEFAULT_COLOR='\x1b[0m';
+INFO_COLOR="\\\x1B[33m";
+OK_COLOR="\\\x1B[32m";
+ERROR_COLOR="\\\x1B[31m";
+HEADER_COLOR="\\\x1B[34m"
+DEFAULT_COLOR="\\\x1B[37m";
+OUTPUT_COLOR="\\\x1B[35m";
 
 #1 - part num
 run_test(){
@@ -15,25 +16,31 @@ run_test(){
 		db_name='info21_bonus';
 	fi
 
-	echo -e ${HEADER_COLOR};
+# 	echo -e $HEADER_COLOR;
 	echo -e "\t~~~~~~~~~~~~~~~~~~~~~";
 	echo -e "\t>>> TESTS_PART_$1 <<<";
 	echo -e "\t~~~~~~~~~~~~~~~~~~~~~";
-	echo -e -n ${DEFAULT_COLOR};
+# 	echo -e -n $DEFAULT_COLOR;
 
-	echo "\i ../tests/t_part$1.sql" |
-	psql -d $db_name 2>&1 |
-	sed -e "s/^psql.*INFO:\s*TEST\s*\(.*\)/${INFO_COLOR}TEST \1${DEFAULT_COLOR}/"\
-		-e "s/^psql.*INFO:\s*OK\.*/${OK_COLOR} > OK${DEFAULT_COLOR}/"\
-		-e "s/^psql.*ERROR:\s*\(.*\)/${ERROR_COLOR} > \1${DEFAULT_COLOR}/"\
-		-e "s/^psql.*INFO:\s*\(.*\)/${HEADER_COLOR}\1${DEFAULT_COLOR}/"\
-		-e '/^psql.*NOTICE:/d'\
-		-e '/ROLLBACK/d'\
-		-e '/DO/d'\
-		-e '/BEGIN/d'\
-		-e '/CALL/d'\
-		-e '/COMMIT/d'\
-		-e '/CONTEXT:/d'
+    echo -e "$(\
+
+    echo "\i ../tests/t_part$1.sql" |
+    psql -d $db_name 2>&1 |
+    sed -e "s/^psql.*INFO:[ ]*TEST\s*\(.*\)/${INFO_COLOR}TEST \1${DEFAULT_COLOR}/"\
+        -e "s/^psql.*\(FNC_.*\)/${OUTPUT_COLOR} >>> OUTPUT FOR \1 <<<${DEFAULT_COLOR}/"\
+        -e "s/^psql.*\(PRCDR_.*\)/${OUTPUT_COLOR} >>> OUTPUT FOR \1 <<<${DEFAULT_COLOR}/"\
+        -e "s/^psql.*INFO:[ ]*\(.*\)/${INFO_COLOR} > \1${DEFAULT_COLOR}/"\
+        -e "s/^psql.*INFO:[ ]*OK\.*/${OK_COLOR} > OK${DEFAULT_COLOR}/"\
+        -e "s/^psql.*ERROR:[ ]*\(.*\)/${ERROR_COLOR} > \1${DEFAULT_COLOR}/"\
+        -e "/^psql.*NOTICE:/d"\
+        -e "/ROLLBACK/d"\
+        -e "/DO/d"\
+        -e "/BEGIN/d"\
+        -e "/CALL/d"\
+        -e "/COMMIT/d"\
+        -e "/CONTEXT:/d"
+
+    )"
 }
 
 if (( $# != 1 )); then
