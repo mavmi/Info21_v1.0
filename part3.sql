@@ -1,5 +1,5 @@
 /*
- * 1) 1
+ * 1)
  * Returns table with all transferred_points between peers and total points.
  * The number is negative if peer 2 received more points from peer 1.
  */
@@ -27,7 +27,7 @@ $$ language plpgsql;
 
 
 /*
- * 2) 2
+ * 2)
  * Returns all successfully passed tasks
  */
 create or replace function fnc_successfully_passed_tasks()
@@ -47,7 +47,7 @@ $$ language plpgsql;
 
 
 /*
- * 3) 3
+ * 3)
  * Returns list of peers who have not left campus all the 'finding_day'
  */
 create or replace function fnc_hold_day_in_campus_list(finding_day date)
@@ -69,38 +69,7 @@ $$ language plpgsql;
 
 
 /*
- * 4) MUST BE DELETED
- * Find the percentage of successful and unsuccessful checks for all time
- */
-create or replace procedure prcdr_passed_state_percentage(ref refcursor) as
-$$
-begin
-	open ref for
-		with cte_count_states as (
-			select count(resume_f) as f_sum,
-				count(resume_s) as s_sum
-			from v_all_passing_checks
-		)
-		select
-		    (
-		        case
-		            when ((s_sum + f_sum) = 0) then 0
-		            else (s_sum * 100 / (s_sum + f_sum))
-		        end
-            ) as SuccessfulChecks,
-		    (
-		        case
-		            when ((s_sum + f_sum) = 0) then 0
-		            else (f_sum * 100 / (s_sum + f_sum))
-		        end
-            ) as UnsuccessfulChecks
-		from cte_count_states;
-end;
-$$ language plpgsql;
-
-
-/*
- * 5) 4
+ * 4)
  * Calculate the change in the number of peer points of each
  * peer using the TransferredPoints table
  */
@@ -133,7 +102,7 @@ $$ language plpgsql;
 
 
 /*
- * 6) 5
+ * 5)
  * Calculate the change in the number of peer points of each
  * peer using the fnc_readable_transferred_points() function
  */
@@ -162,7 +131,7 @@ $$ language plpgsql;
 
 
 /*
- * 7) 6
+ * 6)
  * Find the most frequently checked task for each day
  */
 create or replace procedure prcdr_frequently_checked_task(ref refcursor) as
@@ -186,34 +155,7 @@ $$ language plpgsql;
 
 
 /*
- * 8) MUST BE DELETED
- * Determine the duration of the last P2P check
- * (time between 'Start' and 'Success'/'Failure')
- */
-create or replace procedure prcdr_checking_time_duration(ref refcursor) as
-$$
-begin
-	open ref for
-		with cte_check as (
-			select *, count("Check") over (partition by "Check")
-			from P2P
-			order by id desc
-		)
-		select make_time(
-			(extract(hour from (end1.time - start2.time)))::int,
-			(extract(minute from (end1.time - start2.time)))::int,
-			(extract(second from (end1.time - start2.time)))
-		) as CheckDuration
-		from cte_check end1
-			left join cte_check start2 on start2."Check" = end1."Check"
-				and end1.state != start2.state
-		where end1.count = 2 limit 1;
-end;
-$$ language plpgsql;
-
-
-/*
- * 9) 7
+ * 7)
  * Find all peers who have completed the whole 'block_name'
  * block of tasks and the completion date of the last task
  */
@@ -243,7 +185,7 @@ $$ language plpgsql;
 
 
 /*
- * 10) 8
+ * 8)
  * Determine the peer for checking who was recommended by the peer's friends
  * (peer with maximum count of recommendation from all friends)
  */
@@ -267,48 +209,7 @@ $$ language plpgsql;
 
 
 /*
- * REALIZATION WITH CROSS JOIN:
- *
- * create or replace procedure prcdr_percenge_started_block(
- * 	ref refcursor,
- * 	block_1 varchar,
- * 	block_2 varchar
- * ) as
- * $$
- * declare
- * 	peers_number numeric := (select count(*) from peers);
- * begin
- * 	open ref for
- * 		select (block1 * 100 / peers_number)::int as StartedBlock1,
- * 			(block2 * 100 / peers_number)::int as StartedBlock2,
- * 			(block12 * 100 / peers_number)::int as StartedBothBlocks,
- * 			((peers_number - (block1 + block2 + block12))
- * 				* 100 / peers_number)::int as DidntStartAnyBlock
- * 		from (
- * 				select count(peer) as block1
- * 				from fnc_is_peer_passed_block(block_1)
- * 				where count = 1
- * 			) as block1
- * 			cross join (
- * 				select count(peer) as block2
- * 				from fnc_is_peer_passed_block(block_2)
- * 				where count = 1
- * 			) as block2
- * 			cross join (
- * 				select count(*) as block12
- * 				from fnc_is_peer_passed_block(block_1) as tmp
- * 					join v_peers_tasks_blocks as v_ptb2 on v_ptb2.peer = tmp.peer
- * 						and v_ptb2.task_block = block_2
- * 				group by v_ptb2.peer
- * 				limit 1
- * 			) as both_blocks;
- * end;
- * $$ language plpgsql;
- */
-
-
-/*
- * 11) 9
+ * 9)
  * Determine the percentage of peers who:
  * 	- Started only 'block_1'
  * 	- Started only 'block_2'
@@ -358,28 +259,7 @@ $$ language plpgsql;
 
 
 /*
- * 12) MUST BE DELETED -
- * Determine 'n' peers with the greatest number of friends
- */
-create or replace procedure prcdr_greates_friends_number(
-	ref refcursor,
-	n bigint
-) as
-$$
-begin
-	open ref for
-		select nickname as Peer,
-			count(friend) as FriendsCount
-		from v_peers_friends
-		group by nickname
-		order by FriendsCount desc
-		limit n;
-end;
-$$ language plpgsql;
-
-
-/*
- * 13) 10
+ * 10)
  * Determine the percentage of peers who have successfully
  * and unsuccessfully passed a check on their birthday
  */
@@ -432,34 +312,7 @@ $$ language plpgsql;
 
 
 /*
- * 14) MUST BE DELETED
- * Determine the total amount of XP gained by each peer
- */
-create or replace procedure prcdr_total_peer_xp_amount(ref refcursor) as
-$$
-begin
-	open ref for
-		with cte_peers_xp as (
-			select
-				checked,
-				task,
-				max(xpamount)
-			from v_all_passing_checks as v_apch
-				join XP on XP."Check" = v_apch.checks_id and resume_f is null
-			group by checked, task
-			order by v_apch.checked, v_apch.task
-		)
-		select checked as Peer,
-			sum(max) as XP
-		from cte_peers_xp
-		group by checked
-		order by XP desc;
-end;
-$$ language plpgsql;
-
-
-/*
- * 15) 11
+ * 11)
  * Determine all peers who did the given 'task_1' and 'task_2',
  * but did not do 'task_3'
  */
@@ -484,7 +337,7 @@ $$ language plpgsql;
 
 
 /*
- * 16) 12
+ * 12)
  * Output the number of mandatory preceding tasks for each task
  * using recursive common table expression
  */
@@ -514,7 +367,7 @@ $$ language plpgsql;
 
 
 /*
- * 17) 13
+ * 13)
  * Determine days which have at least 'N' consecutive successful checks
  */
 create or replace procedure prcdr_checks_lucky_days (
@@ -550,28 +403,7 @@ $$ language plpgsql;
 
 
 /*
- * 18) MUST BE DELETED
- * Determine the peer with the greatest number of completed tasks
- */
-create or replace procedure prcdr_peer_with_highest_passed_tasks_number(
-	ref refcursor
-) as
-$$
-begin
-	open ref for
-		select checked as Peer,
-			count(*) as CompletedNumber
-		from v_all_passing_checks1
-		where resume <> 'F'
-		GROUP by checked
-		order by CompletedNumber desc
-		limit 1;
-end;
-$$ language plpgsql;
-
-
-/*
- * 19) 14
+ * 14)
  * Determine the peer with the highest amount of XP
  */
 create or replace procedure prcdr_peer_with_highest_xp(
@@ -593,48 +425,7 @@ $$ language plpgsql;
 
 
 /*
- * 20) MUST BE DELETED -
- * Determine the peer who spent the longest amount of time on campus today
- */
-create or replace procedure prcdr_longest_campus_visit_today(
-	ref refcursor
-) as
-$$
-begin
-	open ref for
-		with cte_current_date_difs as (
-			select peer,
-				(case
-					when date <> current_date
-						then coalesce(logout::time, localtime(0))
-					else
-						(logout::time - time)::time
-					end
-				) as dif
-			from (
-				select *,
-					lead((date + time), 1) over (
-						partition by peer
-						order by id
-					) as logout
-				from timetracking
-				order by 1
-			) as d
-			where (date = current_date
-				or (state <> 2 and logout is null)
-				or logout::date = current_date)
-				and state = 1
-		)
-		select peer
-		from cte_current_date_difs
-		order by dif desc
-		limit 1;
-end;
-$$ language plpgsql;
-
-
-/*
- * 21) 15
+ * 15)
  * Determine the peers that came before the 'before_time'
  * at least 'N' times during the whole time
  */
@@ -659,7 +450,7 @@ $$ language plpgsql;
 
 
 /*
- * 22) 16
+ * 16)
  * Determine the peers who left the campus more than 'M'
  * times during the last 'N' days
  */
@@ -686,58 +477,7 @@ $$ language plpgsql;
 
 
 /*
- * 23) MUST BE DELETED
- * Determine which peer was the last to come in today
- */
-create or replace procedure prcdr_who_come_laster(ref refcursor) as
-$$
-begin
-	open ref for
-		select peer
-		from timetracking
-		where date = CURRENT_DATE and state = 1
-		order by time desc
-		limit 1;
-end;
-$$ language plpgsql;
-
-
-/*
- * 24) MUST BE DELETED
- * Determine the peer that left campus yesterday for more than 'N' minutes
- */
-create or replace procedure prcdr_who_come_back_in_time(
-	ref refcursor,
-	N bigint
-) as
-$$
-begin
-	open ref for
-		select peer
-		from (
-			select
-				peer, date, time, state,
-				lead(date + time, 1) over (
-					partition by peer
-					order by id
-				) as next_coming
-			from timetracking
-		) as comings
-		where date = current_date - interval '1 day'
-			and (extract
-				(epoch
-					from (
-						next_coming - (date + time)
-					)
-				) / 60) > N
-			and state = 2
-		order by peer;
-end;
-$$ language plpgsql;
-
-
-/*
- * 25) 17
+ * 17)
  * Determine for each month of year the percentage of early
  * peers visits (before 12:00) in their birthdays
  */
