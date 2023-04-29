@@ -22,23 +22,21 @@ run_test(){
 	echo -e "\t~~~~~~~~~~~~~~~~~~~~~";
 
     echo -e "$(\
-
-    echo "\i ../tests/t_part$1.sql" |
-    psql -d $db_name 2>&1 |
-    sed -e "s/^psql.*INFO:[ ]*TEST\s*\(.*\)/${INFO_COLOR}TEST \1${DEFAULT_COLOR}/"\
-        -e "s/^psql.*\(FNC_.*\)/${OUTPUT_COLOR} >>> OUTPUT FOR \1 <<<${DEFAULT_COLOR}/"\
-        -e "s/^psql.*\(PRCDR_.*\)/${OUTPUT_COLOR} >>> OUTPUT FOR \1 <<<${DEFAULT_COLOR}/"\
-        -e "s/^psql.*INFO:[ ]*\(.*\)/${INFO_COLOR} > \1${DEFAULT_COLOR}/"\
-        -e "s/^psql.*INFO:[ ]*OK\.*/${OK_COLOR} > OK${DEFAULT_COLOR}/"\
-        -e "s/^psql.*ERROR:[ ]*\(.*\)/${ERROR_COLOR} > \1${DEFAULT_COLOR}/"\
-        -e "/^psql.*NOTICE:/d"\
-        -e "/ROLLBACK/d"\
-        -e "/DO/d"\
-        -e "/BEGIN/d"\
-        -e "/CALL/d"\
-        -e "/COMMIT/d"\
-        -e "/CONTEXT:/d"
-
+        echo "\i ../tests/t_part$1.sql" |
+        psql -d $db_name 2>&1 |
+        sed -e "s/^psql.*INFO:[ ]*TEST\s*\(.*\)/${INFO_COLOR}TEST \1${DEFAULT_COLOR}/"\
+            -e "s/^psql.*\(FNC_.*\)/${OUTPUT_COLOR} >>> OUTPUT FOR \1 <<<${DEFAULT_COLOR}/"\
+            -e "s/^psql.*\(PRCDR_.*\)/${OUTPUT_COLOR} >>> OUTPUT FOR \1 <<<${DEFAULT_COLOR}/"\
+            -e "s/^psql.*INFO:[ ]*\(.*\)/${INFO_COLOR} > \1${DEFAULT_COLOR}/"\
+            -e "s/^psql.*INFO:[ ]*OK\.*/${OK_COLOR} > OK${DEFAULT_COLOR}/"\
+            -e "s/^psql.*ERROR:[ ]*\(.*\)/${ERROR_COLOR} > \1${DEFAULT_COLOR}/"\
+            -e "/^psql.*NOTICE:/d"\
+            -e "/ROLLBACK/d"\
+            -e "/DO/d"\
+            -e "/BEGIN/d"\
+            -e "/CALL/d"\
+            -e "/COMMIT/d"\
+            -e "/CONTEXT:/d"
     )"
 }
 

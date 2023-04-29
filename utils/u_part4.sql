@@ -1,20 +1,3 @@
-/*
- * THEORY:
- *
- * About event triggers:
- * 1. https://www.dbi-services.com/blog/can-i-do-it-with-postgresql-16-ddl-triggers/
- * 2. https://pgpedia.info/p/pg_event_trigger.html
- * 3. (manual) https://www.postgresql.org/docs/current/functions-event-triggers.html
- * 4. (list of command tags) https://www.postgresql.org/docs/current/event-trigger-matrix.html
- *
- * Record type:
- * https://www.postgresqltutorial.com/postgresql-plpgsql/plpgsql-record-types/
- *
- * About regular expresions in postgresql
- * https://hevodata.com/learn/postgresql-regex/
- */
-
-
 ------------
 -- Tables --
 ------------
@@ -212,7 +195,6 @@ for each row
 execute procedure trg_fnc_check_id();
 
 
-
 create or replace function trg_fnc_udate() returns trigger as
 $$
 begin
@@ -226,7 +208,6 @@ create trigger trg_dml_update
 after update on PlusTableOne
 for each row
 execute procedure trg_fnc_udate();
-
 
 
 create or replace function trg_fnc_delete() returns trigger as

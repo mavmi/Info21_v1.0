@@ -190,6 +190,7 @@ end;
 $$ language plpgsql;
 rollback;
 
+
 --------------------------
 --- prcdr_total_points ---
 --------------------------
