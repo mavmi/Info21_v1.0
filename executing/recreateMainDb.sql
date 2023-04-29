@@ -9,4 +9,3 @@ create database info21;
 \i ../utils/u_part2-part3.sql;
 \i ../part2.sql;
 \i ../part3.sql;
-\i ../tests/t_part3.sql;

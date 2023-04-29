@@ -95,10 +95,21 @@ create or replace view v_peers_tasks_blocks as (
 
 
 /*
+ * Table with peers and all names of tasks which were started peer
+ */
+create or replace view v_peers_tasks as (
+	select peer, task as task_name
+	from Checks
+	group by peer, task
+	order by peer
+);
+
+
+/*
  * Return peers (who started 'block'), their started blocks of tasks
  * and count of started blocks
  */
-create or replace function fnc_is_peer_passed_block(block varchar)
+create or replace function fnc_who_started_block(block varchar)
 	returns table(peer varchar, block_name varchar, count bigint) as
 $$
 begin
@@ -109,6 +120,26 @@ begin
 		from v_peers_tasks_blocks as v_ptb
 			join v_peers_tasks_blocks as v_ptb1 on v_ptb1.peer = v_ptb.peer
 				and v_ptb1.task_block = block
+	);
+end;
+$$ language plpgsql;
+
+
+/*
+ * Return peers (who started 'task'), their started tasks
+ * and count of started tasks
+ */
+create or replace function fnc_who_started_task(task varchar)
+	returns table(peer varchar, task_name varchar, count bigint) as
+$$
+begin
+	return query(
+		select v_pts.peer,
+			v_pts.task_name::varchar,
+			count(v_pts.peer) over (partition by v_pts.peer)
+		from v_peers_tasks as v_pts
+			join v_peers_tasks as v_pts1 on v_pts1.peer = v_pts.peer
+				and v_pts1.task_name = task
 	);
 end;
 $$ language plpgsql;

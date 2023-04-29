@@ -111,7 +111,7 @@ begin
 		with cte_checking as (
 			select
 				checkingpeer as Peer,
-				count(pointsamount) as total_plus_count
+				sum(pointsamount) as total_plus_count
 			from TransferredPoints
 			group by checkingpeer
 			order by 1
@@ -123,7 +123,7 @@ begin
 			full join (
 				select
 					checkedpeer as Peer,
-					count(pointsamount) as total_minus_count
+					sum(pointsamount) as total_minus_count
 				from TransferredPoints
 				group by checkedpeer
 				order by 1
@@ -329,21 +329,21 @@ begin
 			select (
 					(
 						select count(peer) as block1
-						from fnc_is_peer_passed_block(block_1)
+						from fnc_who_started_block(block_1)
 						where count = 1
 					) * 100 / peers_number
 				)::int as StartedBlock1,
 				(
 					(
 						select count(peer) as block2
-						from fnc_is_peer_passed_block(block_2)
+						from fnc_who_started_block(block_2)
 						where count = 1
 					) * 100 / peers_number
 				)::int as StartedBlock2,
 				(
 					(
 						select count(*) as block12
-						from fnc_is_peer_passed_block(block_1) as tmp
+						from fnc_who_started_block(block_1) as tmp
 						where block_name = block_2
 					) * 100 / peers_number
 				)::int as StartedBothBlocks
@@ -358,7 +358,7 @@ $$ language plpgsql;
 
 
 /*
- * 12) MUST BE DELETED
+ * 12) MUST BE DELETED -
  * Determine 'n' peers with the greatest number of friends
  */
 create or replace procedure prcdr_greates_friends_number(
@@ -404,10 +404,12 @@ begin
 							(cte_sc1.count * 100
 							/ (cte_sc1.count + cte_sc2.count)::numeric), 0
 						)
-					else round(
+		            when 'F' then
+						round(
 							(cte_sc2.count * 100
 							/ (cte_sc1.count + cte_sc2.count)::numeric), 0
 						)
+					else 0
 					end
 				) as SuccessfulChecks,
 				(case cte_sc1.state
@@ -471,11 +473,11 @@ $$
 begin
 	open ref for
 		select peer
-		from fnc_is_peer_passed_block(task_1) as fnc_ipb
-		where block_name = task_2 and peer not in(
+		from fnc_who_started_task(task_1) as fnc_ipb
+		where task_name = task_2 and peer not in(
 			select peer
-			from fnc_is_peer_passed_block(task_1) as fnc_ipb
-			where block_name = task_3
+			from fnc_who_started_task(task_1) as fnc_ipb
+			where task_name = task_3
 		);
 end;
 $$ language plpgsql;
@@ -531,7 +533,10 @@ begin
 			cte_successful_count as (
 				select checks_date, count(*) over (partition by checks_date)
 				from cte_previous_state
-				where resume = 'S' and (l = 'S' or l = '-')
+				    join Tasks on cte_previous_state.task = Tasks.Title
+				    join XP on cte_previous_state.checks_id = XP."Check"
+				where resume = 'S' and (l = 'S' or l = '-') and
+                    XP.XPAmount >= Tasks.MaxXP * 0.8
 			)
 		select checks_date
 		from (
@@ -588,7 +593,7 @@ $$ language plpgsql;
 
 
 /*
- * 20) MUST BE DELETED
+ * 20) MUST BE DELETED -
  * Determine the peer who spent the longest amount of time on campus today
  */
 create or replace procedure prcdr_longest_campus_visit_today(
@@ -747,7 +752,6 @@ begin
 					time
 				from timetracking
 					join peers on peers.nickname = timetracking.peer
-						and extract(day from peers.birthday) = extract(day from timetracking.date)
 						and extract(month from peers.birthday) = extract(month from timetracking.date)
 				where timetracking.state = 1
 			),
@@ -766,7 +770,8 @@ begin
 				else
 					0
 				end
-			) as EarlyEntries
+			) as EarlyEntries,
+		    early, total
 		from (
 			select distinct on (month) month,
 				count(*) over (partition by month) as total

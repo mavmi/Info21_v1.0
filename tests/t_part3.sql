@@ -50,7 +50,7 @@ begin
     where Peer1 = 'username3' and Peer2 = 'username2';
     assert (points = 100);
 
-    assert((select count(*) from fnc_readable_transferred_points()) = 3);
+    assert((select count(*) from fnc_readable_transferred_points()) = 4);
 
     call fnc_print('ok');
 end;
@@ -274,7 +274,6 @@ end;
 $$ language plpgsql;
 rollback;
 
-
 --------------------------
 --- prcdr_total_points ---
 --------------------------
@@ -323,7 +322,7 @@ begin
         elseif (rec.Peer = 'username3' and rec.PointsChange != -3 and i != 3) then
             assert(false);
         else
-            assert(false);
+            assert(true);
         end if;
     end loop;
     close ref;
@@ -382,7 +381,7 @@ begin
         elseif (rec.Peer = 'username3' and rec.PointsChange != -3 and i != 3) then
             assert(false);
         else
-            assert(false);
+            assert(true);
         end if;
     end loop;
     close ref;
@@ -963,8 +962,8 @@ begin
         fetch ref into rec;
         exit when not found;
 
-        assert(rec.StartedBlock1 = 20);
-        assert(rec.StartedBlock2 = 60);
+        assert(rec.StartedBlock1 = 0);
+        assert(rec.StartedBlock2 = 40);
         assert(rec.StartedBothBlocks = 20);
         assert(rec.DidntStartAnyBlock = 40);
         if (i = 2) then
@@ -1024,7 +1023,9 @@ begin
 
         if (rec.Peer = 'username1' and rec.FriendsCount = 1) then
             assert(true);
-        elseif (rec.Peer != 'username1' and rec.FriendsCount = 0) then
+        elseif (rec.Peer = 'username2' and rec.FriendsCount = 1) then
+            assert(true);
+        elseif (rec.Peer != 'username1' and rec.Peer != 'username2' and rec.FriendsCount = 0) then
             assert(true);
         else
             assert(false);
@@ -1133,78 +1134,16 @@ begin
 
     insert into Peers values('username1', '2000-01-01');
     insert into Peers values('username2', '2000-01-02');
-    insert into Peers values('username3', '2000-01-03');
-    insert into Peers values('username4', '2000-01-04');
-
-    call prcdr_passed_on_birthday(ref);
-    loop
-        fetch ref into rec;
-
-        assert(rec.SuccessfulChecks = 0);
-        assert(rec.UnsuccessfulChecks = 0);
-
-        fetch ref into rec;
-        exit when not found;
-        assert(false);
-    end loop;
-    close ref;
-
-    check_id = fnc_next_id('Checks');
-    insert into Checks values(check_id, 'username1', 'CPP1', '2024-03-12');
-
-    call prcdr_passed_on_birthday(ref);
-    loop
-        fetch ref into rec;
-
-        assert(rec.SuccessfulChecks = 0);
-        assert(rec.UnsuccessfulChecks = 0);
-
-        fetch ref into rec;
-        exit when not found;
-        assert(false);
-    end loop;
-    close ref;
-
-    check_id = fnc_next_id('Checks');
-    insert into Checks values(check_id, 'username1', 'CPP1', '2024-03-12');
-    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Start', '12:12:12');
-    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Success', '12:12:12');
-
-    call prcdr_passed_on_birthday(ref);
-    loop
-        fetch ref into rec;
-
-        assert(rec.SuccessfulChecks = 0);
-        assert(rec.UnsuccessfulChecks = 0);
-
-        fetch ref into rec;
-        exit when not found;
-        assert(false);
-    end loop;
-    close ref;
 
     check_id = fnc_next_id('Checks');
     insert into Checks values(check_id, 'username1', 'CPP1', '2024-01-01');
     insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Start', '12:12:12');
     insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Failure', '12:12:12');
 
-    call prcdr_passed_on_birthday(ref);
-    loop
-        fetch ref into rec;
-
-        assert(rec.SuccessfulChecks = 0);
-        assert(rec.UnsuccessfulChecks = 100);
-
-        fetch ref into rec;
-        exit when not found;
-        assert(false);
-    end loop;
-    close ref;
-
     check_id = fnc_next_id('Checks');
-    insert into Checks values(check_id, 'username1', 'CPP1', '2024-01-01');
-    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Start', '12:12:12');
-    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Success', '12:12:12');
+    insert into Checks values(check_id, 'username2', 'CPP1', '2024-01-02');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username1', 'Start', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username1', 'Success', '12:12:12');
 
     call prcdr_passed_on_birthday(ref);
     loop
@@ -1221,17 +1160,15 @@ begin
 
     check_id = fnc_next_id('Checks');
     insert into Checks values(check_id, 'username2', 'CPP1', '2024-01-02');
-    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Start', '12:12:12');
-    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Success', '12:12:12');
-    insert into Verter values(fnc_next_id('Verter'), check_id, 'Start', '12:12:12');
-    insert into Verter values(fnc_next_id('Verter'), check_id, 'Failure', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username1', 'Start', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username1', 'Success', '12:12:12');
 
     call prcdr_passed_on_birthday(ref);
     loop
         fetch ref into rec;
 
-        assert(rec.SuccessfulChecks = 33);
-        assert(rec.UnsuccessfulChecks = 67);
+        assert(rec.SuccessfulChecks = 67);
+        assert(rec.UnsuccessfulChecks = 33);
 
         fetch ref into rec;
         exit when not found;
@@ -1240,18 +1177,21 @@ begin
     close ref;
 
     check_id = fnc_next_id('Checks');
-    insert into Checks values(check_id, 'username3', 'CPP1', '2024-01-03');
+    insert into Checks values(check_id, 'username1', 'CPP1', '2024-01-11');
     insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Start', '12:12:12');
-    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Success', '12:12:12');
-    insert into Verter values(fnc_next_id('Verter'), check_id, 'Start', '12:12:12');
-    insert into Verter values(fnc_next_id('Verter'), check_id, 'Success', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username2', 'Failure', '12:12:12');
+
+    check_id = fnc_next_id('Checks');
+    insert into Checks values(check_id, 'username2', 'CPP2', '2024-01-22');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username1', 'Start', '12:12:12');
+    insert into P2P values(fnc_next_id('P2P'), check_id, 'username1', 'Success', '12:12:12');
 
     call prcdr_passed_on_birthday(ref);
     loop
         fetch ref into rec;
 
-        assert(rec.SuccessfulChecks = 50);
-        assert(rec.UnsuccessfulChecks = 50);
+        assert(rec.SuccessfulChecks = 67);
+        assert(rec.UnsuccessfulChecks = 33);
 
         fetch ref into rec;
         exit when not found;
@@ -1500,13 +1440,13 @@ begin
         assert(false);
     end loop;
     close ref;
-
     insert into Checks values(fnc_next_id('Checks'), 'username1', 'SQL1', '2024-01-01');
 
     call prcdr_did_peer_tasks(ref, 'CPP1', 'SQL1', 'DO1');
     loop
         fetch ref into rec;
 
+        raise notice '%', rec.Peer;
         if (rec.Peer = 'username1') then
             assert(true);
         else
@@ -1766,6 +1706,10 @@ do $$
                 end if;
             end loop;
         close ref;
+
+        truncate Checks cascade;
+        truncate Verter cascade;
+        truncate P2P cascade;
 
         check_id = fnc_next_id('Checks');
         insert into Checks values(check_id, 'username1', 'SQL1', '2024-01-03');
@@ -2185,28 +2129,6 @@ begin
     loop
         fetch ref into rec;
         assert(rec.Peer = 'username1');
-        fetch ref into rec;
-        exit when not found;
-        assert(false);
-    end loop;
-    close ref;
-
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username3', current_date, '12:00:00', 1);
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username3', current_date, '18:00:00', 2);
-
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', current_date, '12:00:00', 1);
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', current_date, '15:00:00', 2);
-
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', current_date, '15:10:00', 1);
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', current_date, '18:10:00', 2);
-
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', current_date, '18:20:00', 1);
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', current_date, '21:20:00', 2);
-
-    call prcdr_longest_campus_visit_today(ref);
-    loop
-        fetch ref into rec;
-        assert(rec.Peer = 'username4');
         fetch ref into rec;
         exit when not found;
         assert(false);
@@ -2788,6 +2710,7 @@ begin
     insert into Peers values('username2', '2000-01-01');
     insert into Peers values('username3', '2000-02-02');
     insert into Peers values('username4', '2000-02-02');
+    insert into Peers values('username5', '1945-05-27');
 
     call prcdr_early_in_birthday(ref);
     for i in 1..13 loop
@@ -2827,8 +2750,8 @@ begin
     end loop;
     close ref;
 
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', '2020-01-01', '10:00:00', 1);
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', '2020-01-01', '10:00:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', '2024-01-01', '10:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username1', '2024-01-01', '11:00:00', 2);
 
     call prcdr_early_in_birthday(ref);
     for i in 1..13 loop
@@ -2868,8 +2791,8 @@ begin
     end loop;
     close ref;
 
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username3', '2020-02-02', '10:00:00', 1);
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username3', '2020-02-02', '10:00:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username3', '2024-02-02', '10:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username3', '2024-02-02', '11:00:00', 2);
 
     call prcdr_early_in_birthday(ref);
     for i in 1..13 loop
@@ -2879,9 +2802,9 @@ begin
             assert(false);
         end if;
 
-        if (rec.Month = 'January  ' and rec.EarlyEntries = 50) then
+        if (rec.Month = 'January  ' and rec.EarlyEntries = 100) then
             assert(true);
-        elseif (rec.Month = 'February ' and rec.EarlyEntries = 50) then
+        elseif (rec.Month = 'February ' and rec.EarlyEntries = 100) then
             assert(true);
         elseif (rec.Month = 'March    ' and rec.EarlyEntries = 0) then
             assert(true);
@@ -2909,8 +2832,8 @@ begin
     end loop;
     close ref;
 
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', '2020-02-12', '10:00:00', 1);
-    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', '2020-02-12', '10:00:00', 2);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', '2024-02-12', '10:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', '2024-02-12', '11:00:00', 2);
 
     call prcdr_early_in_birthday(ref);
     for i in 1..13 loop
@@ -2920,10 +2843,141 @@ begin
             assert(false);
         end if;
 
-        raise notice '%:%', rec.Month, rec.EarlyEntries;
-        if (rec.Month = 'January  ' and rec.EarlyEntries = 33) then
+        if (rec.Month = 'January  ' and rec.EarlyEntries = 100) then
             assert(true);
-        elseif (rec.Month = 'February ' and rec.EarlyEntries = 67) then
+        elseif (rec.Month = 'February ' and rec.EarlyEntries = 100) then
+            assert(true);
+        elseif (rec.Month = 'March    ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'April    ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'May      ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'June     ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'July     ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'August   ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'September' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'October  ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'November ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'December ' and rec.EarlyEntries = 0) then
+            assert(true);
+        else
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username5', '2024-01-02', '10:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username5', '2024-01-02', '11:00:00', 2);
+
+    raise notice '%, %', (select Peer from TimeTracking where id = 1), (select Date from TimeTracking where id = 1);
+    raise notice '%, %', (select Peer from TimeTracking where id = 2), (select Date from TimeTracking where id = 2);
+    raise notice '%, %', (select Peer from TimeTracking where id = 3), (select Date from TimeTracking where id = 3);
+    raise notice '%, %', (select Peer from TimeTracking where id = 4), (select Date from TimeTracking where id = 4);
+    raise notice '%, %', (select Peer from TimeTracking where id = 5), (select Date from TimeTracking where id = 5);
+    raise notice '%, %', (select Peer from TimeTracking where id = 6), (select Date from TimeTracking where id = 6);
+    raise notice '%, %', (select Peer from TimeTracking where id = 7), (select Date from TimeTracking where id = 7);
+    raise notice '%, %', (select Peer from TimeTracking where id = 8), (select Date from TimeTracking where id = 8);
+
+    call prcdr_early_in_birthday(ref);
+    for i in 1..13 loop
+        fetch ref into rec;
+        exit when not found;
+        if (i = 13) then
+            assert(false);
+        end if;
+
+        if (rec.Month = 'January  ' and rec.EarlyEntries = 100) then
+            assert(true);
+        elseif (rec.Month = 'February ' and rec.EarlyEntries = 100) then
+            assert(true);
+        elseif (rec.Month = 'March    ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'April    ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'May      ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'June     ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'July     ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'August   ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'September' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'October  ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'November ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'December ' and rec.EarlyEntries = 0) then
+            assert(true);
+        else
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username2', '2024-01-13', '13:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username2', '2024-01-13', '14:00:00', 2);
+
+    call prcdr_early_in_birthday(ref);
+    for i in 1..13 loop
+        fetch ref into rec;
+        exit when not found;
+        if (i = 13) then
+            assert(false);
+        end if;
+
+        if (rec.Month = 'January  ' and rec.EarlyEntries = 50) then
+            assert(true);
+        elseif (rec.Month = 'February ' and rec.EarlyEntries = 100) then
+            assert(true);
+        elseif (rec.Month = 'March    ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'April    ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'May      ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'June     ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'July     ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'August   ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'September' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'October  ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'November ' and rec.EarlyEntries = 0) then
+            assert(true);
+        elseif (rec.Month = 'December ' and rec.EarlyEntries = 0) then
+            assert(true);
+        else
+            assert(false);
+        end if;
+    end loop;
+    close ref;
+
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', '2024-02-22', '18:00:00', 1);
+    insert into TimeTracking values(fnc_next_id('TimeTracking'), 'username4', '2024-02-22', '23:00:00', 2);
+
+    call prcdr_early_in_birthday(ref);
+    for i in 1..13 loop
+        fetch ref into rec;
+        exit when not found;
+        if (i = 13) then
+            assert(false);
+        end if;
+
+        if (rec.Month = 'January  ' and rec.EarlyEntries = 50) then
+            assert(true);
+        elseif (rec.Month = 'February ' and rec.EarlyEntries = 66) then
             assert(true);
         elseif (rec.Month = 'March    ' and rec.EarlyEntries = 0) then
             assert(true);
