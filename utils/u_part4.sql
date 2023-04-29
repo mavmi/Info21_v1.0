@@ -212,7 +212,6 @@ for each row
 execute procedure trg_fnc_check_id();
 
 
-
 create or replace function trg_fnc_udate() returns trigger as
 $$
 begin
@@ -226,7 +225,6 @@ create trigger trg_dml_update
 after update on PlusTableOne
 for each row
 execute procedure trg_fnc_udate();
-
 
 
 create or replace function trg_fnc_delete() returns trigger as
