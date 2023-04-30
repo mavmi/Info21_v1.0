@@ -25,8 +25,6 @@ begin
 end;
 $$ language plpgsql;
 
--- select * from fnc_readable_transferred_points() order by 1;
-
 
 /*
  * 2)
@@ -50,7 +48,7 @@ $$ language plpgsql;
 
 /*
  * 3)
- * Retuens list of peers who have not left campus all the 'finding_day'
+ * Returns list of peers who have not left campus all the 'finding_day'
  */
 create or replace function fnc_hold_day_in_campus_list(finding_day date)
 	returns table("Peer" varchar) as
@@ -83,15 +81,22 @@ begin
 				count(resume_s) as s_sum
 			from v_all_passing_checks
 		)
-		select (s_sum * 100 / (s_sum + f_sum)) as SuccessfulChecks,
-			(f_sum * 100 / (s_sum + f_sum)) as UnsuccessfulChecks
+		select
+		    (
+		        case
+		            when ((s_sum + f_sum) = 0) then 0
+		            else (s_sum * 100 / (s_sum + f_sum))
+		        end
+            ) as SuccessfulChecks,
+		    (
+		        case
+		            when ((s_sum + f_sum) = 0) then 0
+		            else (f_sum * 100 / (s_sum + f_sum))
+		        end
+            ) as UnsuccessfulChecks
 		from cte_count_states;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_passed_state_percentage('ref');
--- fetch all in "ref";
 
 
 /*
@@ -106,7 +111,7 @@ begin
 		with cte_checking as (
 			select
 				checkingpeer as Peer,
-				count(pointsamount) as total_plus_count
+				sum(pointsamount) as total_plus_count
 			from TransferredPoints
 			group by checkingpeer
 			order by 1
@@ -118,7 +123,7 @@ begin
 			full join (
 				select
 					checkedpeer as Peer,
-					count(pointsamount) as total_minus_count
+					sum(pointsamount) as total_minus_count
 				from TransferredPoints
 				group by checkedpeer
 				order by 1
@@ -126,15 +131,11 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_total_points_changes('ref');
--- fetch all in "ref";
-
 
 /*
  * 6)
  * Calculate the change in the number of peer points of each
- * peer using the fnc_readable_transferred_points() funcion
+ * peer using the fnc_readable_transferred_points() function
  */
 create or replace procedure prcdr_totall_points_from_func(ref refcursor) as
 $$
@@ -159,10 +160,6 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_totall_points_from_func('ref');
--- fetch all in "ref";
-
 
 /*
  * 7)
@@ -186,10 +183,6 @@ begin
 		where c2.date is null;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_frequently_checked_task('ref');
--- fetch all in "ref";
 
 
 /*
@@ -217,10 +210,6 @@ begin
 		where end1.count = 2 limit 1;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_checking_time_duration('ref');
--- fetch all in "ref";
 
 
 /*
@@ -252,11 +241,6 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_passed_task_block('ref', 'A');
--- fetch all in "ref";
-
-
 
 /*
  * 10)
@@ -281,51 +265,6 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_recommended_peer('ref');
--- fetch all in "ref";
-
-
-/*
- * REALIZATION WITH CROSS JOIN:
- *
- * create or replace procedure prcdr_percenge_started_block(
- * 	ref refcursor,
- * 	block_1 varchar,
- * 	block_2 varchar
- * ) as
- * $$
- * declare
- * 	peers_number numeric := (select count(*) from peers);
- * begin
- * 	open ref for
- * 		select (block1 * 100 / peers_number)::int as StartedBlock1,
- * 			(block2 * 100 / peers_number)::int as StartedBlock2,
- * 			(block12 * 100 / peers_number)::int as StartedBothBlocks,
- * 			((peers_number - (block1 + block2 + block12))
- * 				* 100 / peers_number)::int as DidntStartAnyBlock
- * 		from (
- * 				select count(peer) as block1
- * 				from fnc_is_peer_passed_block(block_1)
- * 				where count = 1
- * 			) as block1
- * 			cross join (
- * 				select count(peer) as block2
- * 				from fnc_is_peer_passed_block(block_2)
- * 				where count = 1
- * 			) as block2
- * 			cross join (
- * 				select count(*) as block12
- * 				from fnc_is_peer_passed_block(block_1) as tmp
- * 					join v_peers_tasks_blocks as v_ptb2 on v_ptb2.peer = tmp.peer
- * 						and v_ptb2.task_block = block_2
- * 				group by v_ptb2.peer
- * 				limit 1
- * 			) as both_blocks;
- * end;
- * $$ language plpgsql;
- */
-
 
 /*
  * 11)
@@ -349,21 +288,21 @@ begin
 			select (
 					(
 						select count(peer) as block1
-						from fnc_is_peer_passed_block(block_1)
+						from fnc_who_started_block(block_1)
 						where count = 1
 					) * 100 / peers_number
 				)::int as StartedBlock1,
 				(
 					(
 						select count(peer) as block2
-						from fnc_is_peer_passed_block(block_2)
+						from fnc_who_started_block(block_2)
 						where count = 1
 					) * 100 / peers_number
 				)::int as StartedBlock2,
 				(
 					(
 						select count(*) as block12
-						from fnc_is_peer_passed_block(block_1) as tmp
+						from fnc_who_started_block(block_1) as tmp
 						where block_name = block_2
 					) * 100 / peers_number
 				)::int as StartedBothBlocks
@@ -375,10 +314,6 @@ begin
 		from cte_passed_peers;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_percenge_started_block('ref', 'CPP', 'DO');
--- fetch all in "ref";
 
 
 /*
@@ -401,13 +336,9 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_greates_friends_number('ref', 5);
--- fetch all in "ref";
-
 
 /*
- * 12)
+ * 13)
  * Determine the percentage of peers who have successfully
  * and unsuccessfully passed a check on their birthday
  */
@@ -432,10 +363,12 @@ begin
 							(cte_sc1.count * 100
 							/ (cte_sc1.count + cte_sc2.count)::numeric), 0
 						)
-					else round(
+		            when 'F' then
+						round(
 							(cte_sc2.count * 100
 							/ (cte_sc1.count + cte_sc2.count)::numeric), 0
 						)
+					else 0
 					end
 				) as SuccessfulChecks,
 				(case cte_sc1.state
@@ -455,10 +388,6 @@ begin
 		limit 1;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_passed_on_birthday('ref');
--- fetch all in "ref";
 
 
 /*
@@ -487,10 +416,6 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_total_peer_xp_amount('ref');
--- fetch all in "ref";
-
 
 /*
  * 15)
@@ -507,18 +432,14 @@ $$
 begin
 	open ref for
 		select peer
-		from fnc_is_peer_passed_block(task_1) as fnc_ipb
-		where block_name = task_2 and peer not in(
+		from fnc_who_started_task(task_1) as fnc_ipb
+		where task_name = task_2 and peer not in(
 			select peer
-			from fnc_is_peer_passed_block(task_1) as fnc_ipb
-			where block_name = task_3
+			from fnc_who_started_task(task_1) as fnc_ipb
+			where task_name = task_3
 		);
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_did_peer_tasks('ref', 'SQL', 'A', 'DO');
--- fetch all in "ref";
 
 
 /*
@@ -550,10 +471,6 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_preceding_tasks('ref');
--- fetch all in "ref";
-
 
 /*
  * 17)
@@ -575,7 +492,10 @@ begin
 			cte_successful_count as (
 				select checks_date, count(*) over (partition by checks_date)
 				from cte_previous_state
-				where resume = 'S' and (l = 'S' or l = '-')
+				    join Tasks on cte_previous_state.task = Tasks.Title
+				    join XP on cte_previous_state.checks_id = XP."Check"
+				where resume = 'S' and (l = 'S' or l = '-') and
+                    XP.XPAmount >= Tasks.MaxXP * 0.8
 			)
 		select checks_date
 		from (
@@ -586,10 +506,6 @@ begin
 		where count > (N - 1);
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_checks_lucky_days('ref', 2);
--- fetch all in "ref";
 
 
 /*
@@ -609,11 +525,8 @@ begin
 		GROUP by checked
 		order by CompletedNumber desc
 		limit 1;
+end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_peer_with_highest_passed_tasks_number('ref');
--- fetch all in "ref";
 
 
 /*
@@ -636,10 +549,6 @@ begin
 		limit 1;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_peer_with_highest_xp('ref');
--- fetch all in "ref";
 
 
 /*
@@ -682,10 +591,6 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_longest_campus_visit_today('ref');
--- fetch all in "ref";
-
 
 /*
  * 21)
@@ -710,10 +615,6 @@ begin
 		order by peer;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_came_before('ref', '15:00:00', 3);
--- fetch all in "ref";
 
 
 /*
@@ -742,10 +643,6 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_left_during_time('ref', 2, 15);
--- fetch all in "ref";
-
 
 /*
  * 23)
@@ -762,10 +659,6 @@ begin
 		limit 1;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_who_come_laster('ref');
--- fetch all in "ref";
 
 
 /*
@@ -801,10 +694,6 @@ begin
 end;
 $$ language plpgsql;
 
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_who_come_back_in_time('ref', 800);
--- fetch all in "ref";
-
 
 /*
  * 25)
@@ -822,7 +711,6 @@ begin
 					time
 				from timetracking
 					join peers on peers.nickname = timetracking.peer
-						and extract(day from peers.birthday) = extract(day from timetracking.date)
 						and extract(month from peers.birthday) = extract(month from timetracking.date)
 				where timetracking.state = 1
 			),
@@ -841,7 +729,8 @@ begin
 				else
 					0
 				end
-			) as EarlyEntries
+			) as EarlyEntries,
+		    early, total
 		from (
 			select distinct on (month) month,
 				count(*) over (partition by month) as total
@@ -856,7 +745,3 @@ begin
 			right join cte_generate_months on extract(month from timestamp_math) = month;
 end;
 $$ language plpgsql;
-
--- CALL PROCEDURE WITH REFCURSOR --
--- call prcdr_early_in_birthday('ref');
--- fetch all in "ref";

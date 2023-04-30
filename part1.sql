@@ -97,101 +97,79 @@ begin
         return;
     end if;
 
-    /*
-     * Tasks pull:
-     * 1. 'Wolf'        -> CPP1-CPP4, CPP5(2)
-     * 2. 'Sprat_eater' -> DO1(2), DO2(2), CPP1, CPP2(2), CPP3
-     * 3. 'Near_Muslim' -> DO1-DO6, CPP1, SQL1
-     * 4. 'Pirate'      -> CPP1-CPP5
-     * 5. 'Strangler'   -> A1-A8, SQL1
-     * 6. 'Gabriel'     -> A1-A7, A8(2), SQL1-SQL2
-     * 7. 'Luisi'       -> SQL1-SQL2, SQL3(3)
-     */
+    insert into Checks values(fnc_next_id('Checks'), 'Near_Muslim', 'DO1', '2022-12-01');
+    insert into Checks values(fnc_next_id('Checks'), 'Strangler', 'A1', '2022-12-01');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'A1', '2022-12-01');
 
-     /*
-      * Successfull passeds on birthday [id, module, state]:
-      * 1. 'Wolf'        -> [27, CPP1, Success]
-      * 2. 'Sprat_eater' -> [28, CPP2, Failure]
-      * 3. 'Near_Muslim' -> [5, DO1, Success]
-      * 4. 'Pirate'      -> [didnt passed to birthday]
-      * 5. 'Strangler'   -> [12, A4, Success]
-      * 6. 'Gabriel'     -> [37, A8, Failure]
-      * 7. 'Luisi'       -> [50, SQL3, Success]
-      */
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'A2', '2022-12-03');
 
-    insert into Checks values(1, 'Near_Muslim', 'DO1', '2022-12-01');
-    insert into Checks values(2, 'Strangler', 'A1', '2022-12-01');
-    insert into Checks values(3, 'Gabriel', 'A1', '2022-12-01');
+    insert into Checks values(fnc_next_id('Checks'), 'Near_Muslim', 'DO2', '2022-12-10');
+    insert into Checks values(fnc_next_id('Checks'), 'Strangler', 'A2', '2022-12-10');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'A3', '2022-12-10');
 
-    insert into Checks values(4, 'Gabriel', 'A2', '2022-12-03');
+    insert into Checks values(fnc_next_id('Checks'), 'Near_Muslim', 'DO3', '2022-12-15');
+    insert into Checks values(fnc_next_id('Checks'), 'Strangler', 'A3', '2022-12-15');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'A4', '2022-12-15');
 
-    insert into Checks values(5, 'Near_Muslim', 'DO2', '2022-12-10');
-    insert into Checks values(6, 'Strangler', 'A2', '2022-12-10');
-    insert into Checks values(7, 'Gabriel', 'A3', '2022-12-10');
+    insert into Checks values(fnc_next_id('Checks'), 'Near_Muslim', 'DO4', '2022-12-24');
+    insert into Checks values(fnc_next_id('Checks'), 'Strangler', 'A4', '2022-12-24');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'A5', '2022-12-24');
 
-    insert into Checks values(8, 'Near_Muslim', 'DO3', '2022-12-15');
-    insert into Checks values(9, 'Strangler', 'A3', '2022-12-15');
-    insert into Checks values(10, 'Gabriel', 'A4', '2022-12-15');
+    insert into Checks values(fnc_next_id('Checks'), 'Near_Muslim', 'DO5', '2023-01-03');
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'DO1', '2023-01-03');
+    insert into Checks values(fnc_next_id('Checks'), 'Strangler', 'A5', '2023-01-03');
 
-    insert into Checks values(11, 'Near_Muslim', 'DO4', '2022-12-24');
-    insert into Checks values(12, 'Strangler', 'A4', '2022-12-24');
-    insert into Checks values(13, 'Gabriel', 'A5', '2022-12-24');
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'DO1', '2023-01-05');
 
-    insert into Checks values(14, 'Near_Muslim', 'DO5', '2023-01-03');
-    insert into Checks values(15, 'Sprat_eater', 'DO1', '2023-01-03');
-    insert into Checks values(16, 'Strangler', 'A5', '2023-01-03');
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'DO2', '2023-01-15');
+    insert into Checks values(fnc_next_id('Checks'), 'Near_Muslim', 'DO6', '2023-01-15');
+    insert into Checks values(fnc_next_id('Checks'), 'Strangler', 'A6', '2023-01-15');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'A6', '2023-01-15');
 
-    insert into Checks values(17, 'Sprat_eater', 'DO1', '2023-01-05');
+    insert into Checks values(fnc_next_id('Checks'), 'Near_Muslim', 'CPP1', '2023-02-01');
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'CPP1', '2023-02-01');
+    insert into Checks values(fnc_next_id('Checks'), 'Strangler', 'A7', '2023-02-01');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'A7', '2023-02-01');
 
-    insert into Checks values(18, 'Sprat_eater', 'DO2', '2023-01-15');
-    insert into Checks values(19, 'Near_Muslim', 'DO6', '2023-01-15');
-    insert into Checks values(20, 'Strangler', 'A6', '2023-01-15');
-    insert into Checks values(21, 'Gabriel', 'A6', '2023-01-15');
+    insert into Checks values(fnc_next_id('Checks'), 'Pirate', 'CPP1', '2023-02-04');
+    insert into Checks values(fnc_next_id('Checks'), 'Wolf', 'CPP1', '2023-02-04');
 
-    insert into Checks values(22, 'Near_Muslim', 'CPP1', '2023-02-01');
-    insert into Checks values(23, 'Sprat_eater', 'CPP1', '2023-02-01');
-    insert into Checks values(24, 'Strangler', 'A7', '2023-02-01');
-    insert into Checks values(25, 'Gabriel', 'A7', '2023-02-01');
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'CPP2', '2023-02-05');
+    insert into Checks values(fnc_next_id('Checks'), 'Pirate', 'CPP2', '2023-02-05');
+    insert into Checks values(fnc_next_id('Checks'), 'Wolf', 'CPP2', '2023-02-05');
 
-    insert into Checks values(26, 'Pirate', 'CPP1', '2023-02-04');
-    insert into Checks values(27, 'Wolf', 'CPP1', '2023-02-04');
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'CPP2', '2023-02-09');
+    insert into Checks values(fnc_next_id('Checks'), 'Pirate', 'CPP3', '2023-02-09');
+    insert into Checks values(fnc_next_id('Checks'), 'Wolf', 'CPP3', '2023-02-09');
 
-    insert into Checks values(28, 'Sprat_eater', 'CPP2', '2023-02-05');
-    insert into Checks values(29, 'Pirate', 'CPP2', '2023-02-05');
-    insert into Checks values(30, 'Wolf', 'CPP2', '2023-02-05');
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'CPP3', '2023-02-12');
+    insert into Checks values(fnc_next_id('Checks'), 'Strangler', 'A8', '2023-02-12');
+    insert into Checks values(fnc_next_id('Checks'), 'Pirate', 'CPP4', '2023-02-12');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'A8', '2023-02-12');
+    insert into Checks values(fnc_next_id('Checks'), 'Wolf', 'CPP4', '2023-02-12');
 
-    insert into Checks values(31, 'Sprat_eater', 'CPP2', '2023-02-09');
-    insert into Checks values(32, 'Pirate', 'CPP3', '2023-02-09');
-    insert into Checks values(33, 'Wolf', 'CPP3', '2023-02-09');
+    insert into Checks values(fnc_next_id('Checks'), 'Wolf', 'CPP5', '2023-02-25');
 
-    insert into Checks values(34, 'Sprat_eater', 'CPP3', '2023-02-12');
-    insert into Checks values(35, 'Strangler', 'A8', '2023-02-12');
-    insert into Checks values(36, 'Pirate', 'CPP4', '2023-02-12');
-    insert into Checks values(37, 'Gabriel', 'A8', '2023-02-12');
-    insert into Checks values(38, 'Wolf', 'CPP4', '2023-02-12');
+    insert into Checks values(fnc_next_id('Checks'), 'Strangler', 'SQL1', '2023-02-27');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'A8', '2023-02-27');
+    insert into Checks values(fnc_next_id('Checks'), 'Pirate', 'CPP5', '2023-02-27');
+    insert into Checks values(fnc_next_id('Checks'), 'Luisi', 'SQL1', '2023-02-27');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'SQL1', '2023-02-27');
+    insert into Checks values(fnc_next_id('Checks'), 'Wolf', 'CPP5', '2023-02-27');
 
-    insert into Checks values(39, 'Wolf', 'CPP5', '2023-02-25');
+    insert into Checks values(fnc_next_id('Checks'), 'Gabriel', 'SQL2', '2023-03-01');
+    insert into Checks values(fnc_next_id('Checks'), 'Luisi', 'SQL2', '2023-03-01');
 
-    insert into Checks values(40, 'Strangler', 'SQL1', '2023-02-27');
-    insert into Checks values(41, 'Gabriel', 'A8', '2023-02-27');
-    insert into Checks values(42, 'Pirate', 'CPP5', '2023-02-27');
-    insert into Checks values(43, 'Luisi', 'SQL1', '2023-02-27');
-    insert into Checks values(44, 'Gabriel', 'SQL1', '2023-02-27');
-    insert into Checks values(45, 'Wolf', 'CPP5', '2023-02-27');
+    insert into Checks values(fnc_next_id('Checks'), 'Luisi', 'SQL3', '2023-03-05');
 
-    insert into Checks values(46, 'Gabriel', 'SQL2', '2023-03-01');
-    insert into Checks values(47, 'Luisi', 'SQL2', '2023-03-01');
+    insert into Checks values(fnc_next_id('Checks'), 'Luisi', 'SQL3', '2023-03-06');
 
-    insert into Checks values(48, 'Luisi', 'SQL3', '2023-03-05');
+    insert into Checks values(fnc_next_id('Checks'), 'Luisi', 'SQL3', '2023-03-07');
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'DO2', '2023-03-07');
+    insert into Checks values(fnc_next_id('Checks'), 'Near_Muslim', 'SQL1', '2023-03-07');
+    insert into Checks values(fnc_next_id('Checks'), 'Wolf', 'CPP5', '2023-03-07');
 
-    insert into Checks values(49, 'Luisi', 'SQL3', '2023-03-06');
-
-    insert into Checks values(50, 'Luisi', 'SQL3', '2023-03-07');
-    insert into Checks values(51, 'Sprat_eater', 'DO2', '2023-03-07'); --Repassing
-    insert into Checks values(52, 'Near_Muslim', 'SQL1', '2023-03-07');
-    insert into Checks values(53, 'Wolf', 'CPP5', '2023-03-07'); --Repassing
-
-    insert into Checks values(54, 'Sprat_eater', 'DO1', '2023-03-08'); --Repassing
+    insert into Checks values(fnc_next_id('Checks'), 'Sprat_eater', 'DO1', '2023-03-08');
 end;
 $$ language plpgsql;
 
@@ -530,60 +508,36 @@ begin
         return;
     end if;
 
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Luisi', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Luisi', 3);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Luisi', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Near_Muslim', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Pirate', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Near_Muslim', 3);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Pirate', 4);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Gabriel', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Near_Muslim', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Luisi', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Strangler', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Gabriel', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Pirate', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Pirate', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Wolf', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Wolf', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Luisi', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Gabriel', 3);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Pirate', 2);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Wolf', 3);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Wolf', 3);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Sprat_eater', 'Luisi', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Wolf', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Sprat_eater', 'Strangler', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Sprat_eater', 'Strangler', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Sprat_eater', 'Strangler', 4);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Sprat_eater', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Sprat_eater', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Pirate', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Luisi', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Sprat_eater', 'Strangler', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Gabriel', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Wolf', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Sprat_eater', 2);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Pirate', 'Luisi', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Wolf', 'Luisi', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Wolf', 'Luisi', 2);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Sprat_eater', 'Wolf', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Pirate', 'Near_Muslim', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Wolf', 'Pirate', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Pirate', 'Near_Muslim', 2);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Wolf', 'Pirate', 3);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Sprat_eater', 'Near_Muslim', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Pirate', 'Wolf', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Wolf', 'Strangler', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Sprat_eater', 'Strangler', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Gabriel', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Pirate', 'Near_Muslim', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Near_Muslim', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Wolf', 'Luisi', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Wolf', 'Pirate', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Wolf', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Wolf', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Pirate', 'Gabriel', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Wolf', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Pirate', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Wolf', 'Pirate', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Gabriel', 'Near_Muslim', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Near_Muslim', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Near_Muslim', 1);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Wolf', 2);
+    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Near_Muslim', 2);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Strangler', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Gabriel', 1);
     insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Sprat_eater', 'Pirate', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Near_Muslim', 'Pirate', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Luisi', 'Wolf', 1);
-    insert into TransferredPoints values(fnc_next_id('TransferredPoints'),'Strangler', 'Sprat_eater', 1);
 end
 $$ language plpgsql;
 
@@ -601,18 +555,6 @@ begin
     if (fill = false) then
         return;
     end if;
-
-    /*
-        Friends:
-
-        'Wolf' -> ['Gabriel'/'Luisi'/'Pirate'/'Sprat_eater'/'Strangler'],
-        'Sprat_eater' -> ['Luisi'/'Near_Muslim'/'Wolf']
-        'Near_Muslim' -> ['Gabriel'/'Luisi'/'Pirate'/'Sprat_eater']
-        'Pirate' -> ['Near_Muslim'/'Strangler'/'Wolf'],
-        'Strangler' -> ['Pirate'/'Wolf'],
-        'Gabriel' -> ['Luisi'/'Near_Muslim'/'Wolf'],
-        'Luisi' -> ['Gabriel'/'Near_Muslim'/'Sprat_eater'/'Wolf']
-    */
 
     insert into Friends values(fnc_next_id('Friends'), 'Wolf', 'Sprat_eater');
     insert into Friends values(fnc_next_id('Friends'), 'Wolf', 'Luisi');
@@ -743,17 +685,6 @@ begin
         return;
     end if;
 
-    /*
-     * Coming on birthday ([+] -> before 12:00):
-     * 1. Near_Muslim -> '1980-12-10'
-     * 2. Strangler -> '2000-12-24' [+]
-     * 3. Wolf -> '1990-02-04' [+]
-     * 4. Sprat_eater -> '1999-02-05' [+]
-     * 5. Gabriel -> '1998-02-12'
-     * 6. Pirate -> '1994-02-27'
-     * 7. Luisi -> '1977-03-07' [+]
-     */
-
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Wolf', '2022-12-01', '11:24:11', 1);
     insert into TimeTracking values(fnc_next_id('TimeTracking'), 'Wolf', '2022-12-01', '23:42:00', 2);
 
@@ -858,8 +789,10 @@ $create_tables$;
 /*** Utils ***/
 create or replace function get_cvs_dir() returns varchar as
 $$
+declare
+    username varchar := (select current_user);
 begin
-    return '/Users/msalena/Desktop/00SQL/cvs/';
+    return concat('/Users/', username, '/Desktop/Info21_v1.0/cvs/');
 end
 $$ language plpgsql;
 create or replace procedure save_to_file(separator char, table_name varchar, file_name varchar) as
@@ -877,18 +810,17 @@ $$ language plpgsql;
 
 
 /*** Trigger functions ***/
--- Check if current insertion has successful P2P --
+-- Check if current insertion's `Check` field has successful P2P --
 create or replace function trg_fnc_successful_checks() returns trigger as
 $$
 begin
     if (coalesce((
             select "Check"
             from P2P
-            where P2P."Check" = new."Check" and P2P.State = 'Success'
-            intersect
-            select ID
-            from Checks
-            where Checks.ID = new."Check"
+                left join Checks on
+                    P2P."Check" = Checks.ID
+            where new."Check" = P2P."Check" and P2P.State = 'Success' and
+                  new."Check" = Checks.ID
         )::int, 0) != 0
     ) then
         return new;
@@ -898,11 +830,33 @@ begin
 end;
 $$ language plpgsql;
 
--- Check `CheckingPeer` on start and finish --
+-- Check if current insertion's `Check` field has successful P2P and Verter --
+create or replace function trg_fnc_successful_checks_and_verter() returns trigger as
+$$
+begin
+    if (coalesce((
+            select P2P."Check"
+            from P2P
+                join Checks on
+                    P2P."Check" = Checks.ID
+                join Verter on
+                    P2P."Check" = Verter."Check"
+            where new."Check" = P2P."Check" and
+                  P2P.State = 'Success' and
+                  (Verter.State = 'Success' or Verter."Check" is null) and
+                  new."Check" = Checks.ID
+        )::int, 0) != 0
+    ) then
+        return new;
+    else
+        return null;
+    end if;
+end;
+$$ language plpgsql;
+
+-- Check if `CheckingPeer's` are equal for start and finish states of one `Check` record --
 create or replace function trg_fnc_p2p_insert_1() returns trigger as
 $$
-declare
-
 begin
     if (new.State = 'Start') then
         return new;
@@ -956,8 +910,8 @@ begin
     update TransferredPoints set PointsAmount = PointsAmount + 1
     where TransferredPoints.CheckingPeer = new.CheckingPeer and
         TransferredPoints.CheckedPeer = new.CheckedPeer;
-    get diagnostics n = row_count;
 
+    get diagnostics n = row_count;
     if (n != 0) then
         return null;
     else
@@ -1004,14 +958,53 @@ begin
                 select
                     count(*)
                 from P2P
-                    join Checks on P2P."Check" = Checks.ID
-                    join Verter on Verter."Check" = Checks.ID
+                    full join Checks on P2P."Check" = Checks.ID
+                    full join Verter on Verter."Check" = Checks.ID
                 where
                     Checks.Peer = new.Peer and
                     Checks.Task = ParentTask and
                     P2P.State = 'Success' and
                         (Verter.State = 'Success' or Verter.State is null)
             ) = 0 then
+        return null;
+    else
+        return new;
+    end if;
+end;
+$$ language plpgsql;
+
+-- To avoid duplicates of friends' pairs and lonely friendship --
+create or replace function trg_fnc_friends_insert() returns trigger as
+$$
+begin
+    if (new.Peer1 = new.Peer2) then
+        return null;
+    elseif (
+            select count(*) from Friends
+            where Peer1 = new.Peer1 and Peer2 = new.Peer2 or
+                  Peer1 = new.Peer2 and Peer2 = new.Peer1
+        ) != 0 then
+        return null;
+    else
+        return new;
+    end if;
+end;
+$$ language plpgsql;
+
+-- Check if new record is not in table --
+-- Check if `Peer` and `RecommendedPeer` are not equal --
+create or replace function trg_fnc_recommendations_insert() returns trigger as
+$$
+begin
+    if (new.Peer = new.RecommendedPeer) then
+        return null;
+    elseif (
+        (
+            select count(*)
+            from Recommendations
+            where Peer = new.Peer and RecommendedPeer = new.RecommendedPeer
+        ) != 0
+    ) then
         return null;
     else
         return new;
@@ -1056,6 +1049,15 @@ before insert on Checks
 for each row
 execute procedure trg_fnc_checks_insert();
 
+create trigger trg_friends_insert
+before insert on Friends
+for each row
+execute procedure trg_fnc_friends_insert();
+
+create trigger trg_recommendations_insert
+before insert on Recommendations
+for each row
+execute procedure trg_fnc_recommendations_insert();
 
 /*** IO procedures ***/
 -- Peers
